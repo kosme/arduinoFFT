@@ -21,7 +21,11 @@
 #ifndef PlainFFT_h /* Prevent loading library twice */
 #define PlainFFT_h
 
-#include "WProgram.h" /* This is where the standard Arduino code lies */
+#if ARDUINO >= 100
+	#include "Arduino.h";
+#else
+	#include "WProgram.h" /* This is where the standard Arduino code lies */
+#endif
 
 #define FFT_LIB_REV 0x02
 /* Custom constants */
