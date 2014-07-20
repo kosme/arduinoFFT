@@ -1,7 +1,7 @@
 /*
 
 	Example of use of the FFT libray
-	Copyright (C) 2011 Didier Longueville
+        Copyright (C) 2014 Enrique Condes
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 	
 */
 
-#include "PlainFFT.h"
+#include "arduinoFFT.h"
 
-PlainFFT FFT = PlainFFT(); /* Create FFT object */
+arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
 /* 
 These values can be changed in order to evaluate the functions 
 */
-const uint16_t samples = 64;
+const uint16_t samples = 64; //This value MUST ALWAYS be a power of 2
 double signalFrequency = 1000;
 double samplingFrequency = 5000;
-uint8_t signalIntensity = 100;
+uint8_t amplitude = 100;
 /* 
 These are the input and output vectors 
 Input vectors receive computed results from FFT
@@ -39,52 +39,61 @@ double vImag[samples];
 #define SCL_TIME 0x01
 #define SCL_FREQUENCY 0x02
 
-void setup(){
-	Serial.begin(115200);
-	Serial.println("Ready");
+void setup()
+{
+  Serial.begin(115200);
+  Serial.println("Ready");
 }
 
 void loop() 
 {
-	/* Build raw data */
-	double cycles = (((samples-1) * signalFrequency) / samplingFrequency);
-	for (uint8_t i = 0; i < samples; i++) {
-		vReal[i] = uint8_t((signalIntensity * (sin((i * (6.2831 * cycles)) / samples) + 1.0)) / 2.0);
-	}
-	PrintVector(vReal, samples, SCL_TIME);
-	FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
-	PrintVector(vReal, samples, SCL_TIME);
-	FFT.Compute(vReal, vImag, samples, FFT_FORWARD); /* Compute FFT */
-	PrintVector(vReal, samples, SCL_INDEX);
-	PrintVector(vImag, samples, SCL_INDEX);
-	FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
-	PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);	
-	double x = FFT.MajorPeak(vReal, samples, samplingFrequency);
-	Serial.println(x, 6);
-	while(1); /* Run Once */
-	// delay(2000); /* Repeat after delay */
+  /* Build raw data */
+  double cycles = (((samples-1) * signalFrequency) / samplingFrequency); //Number of signal cycles that the sampling will read
+  for (uint8_t i = 0; i < samples; i++) 
+  {
+    vReal[i] = uint8_t((amplitude * (sin((i * (6.2831 * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
+    //vReal[i] = uint8_t((amplitude * (sin((i * (6.2831 * cycles)) / samples) + 1.0)) / 2.0);/* Build data displaced on the Y axis to include only positive values*/
+  }
+  Serial.println("Data:");
+  PrintVector(vReal, samples, SCL_TIME);
+  FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
+  Serial.println("Weighed data:");
+  PrintVector(vReal, samples, SCL_TIME);
+  FFT.Compute(vReal, vImag, samples, FFT_FORWARD); /* Compute FFT */
+  Serial.println("Computed Real values:");
+  PrintVector(vReal, samples, SCL_INDEX);
+  Serial.println("Computed Imaginary values:");
+  PrintVector(vImag, samples, SCL_INDEX);
+  FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
+  PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);	
+  double x = FFT.MajorPeak(vReal, samples, samplingFrequency);
+  Serial.println(x, 6);
+  while(1); /* Run Once */
+  // delay(2000); /* Repeat after delay */
 }
 
 void PrintVector(double *vData, uint8_t bufferSize, uint8_t scaleType) 
-{	
-	for (uint16_t i = 0; i < bufferSize; i++) {
-		double abscissa;
-		/* Print abscissa value */
-		switch (scaleType) {
-		case SCL_INDEX:
-			abscissa = (i * 1.0);
-			break;
-		case SCL_TIME:
-			abscissa = ((i * 1.0) / samplingFrequency);
-			break;
-		case SCL_FREQUENCY:
-			abscissa = ((i * 1.0 * samplingFrequency) / samples);
-			break;
-		}
-		Serial.print(abscissa, 6);
-		Serial.print(" ");
-		Serial.print(vData[i], 4);
-		Serial.println();
-	}
-	Serial.println();
+{
+  for (uint16_t i = 0; i < bufferSize; i++) 
+  {
+    double abscissa;
+    /* Print abscissa value */
+    switch (scaleType) 
+    {
+      case SCL_INDEX:
+        abscissa = (i * 1.0);
+	break;
+      case SCL_TIME:
+        abscissa = ((i * 1.0) / samplingFrequency);
+	break;
+      case SCL_FREQUENCY:
+        abscissa = ((i * 1.0 * samplingFrequency) / samples);
+	break;
+    }
+    Serial.print(abscissa, 6);
+    Serial.print(" ");
+    Serial.print(vData[i], 4);
+    Serial.println();
+  }
+  Serial.println();
 }
