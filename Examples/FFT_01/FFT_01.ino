@@ -39,6 +39,8 @@ double vImag[samples];
 #define SCL_TIME 0x01
 #define SCL_FREQUENCY 0x02
 
+#define Theta 6.2831 //2*Pi
+
 void setup()
 {
   Serial.begin(115200);
@@ -51,7 +53,7 @@ void loop()
   double cycles = (((samples-1) * signalFrequency) / samplingFrequency); //Number of signal cycles that the sampling will read
   for (uint8_t i = 0; i < samples; i++) 
   {
-    vReal[i] = uint8_t((amplitude * (sin((i * (6.2831 * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
+    vReal[i] = uint8_t((amplitude * (sin((i * (Theta * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
     //vReal[i] = uint8_t((amplitude * (sin((i * (6.2831 * cycles)) / samples) + 1.0)) / 2.0);/* Build data displaced on the Y axis to include only positive values*/
   }
   Serial.println("Data:");
@@ -65,6 +67,7 @@ void loop()
   Serial.println("Computed Imaginary values:");
   PrintVector(vImag, samples, SCL_INDEX);
   FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
+  Serial.println("Computed magnitudes:");
   PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);	
   double x = FFT.MajorPeak(vReal, samples, samplingFrequency);
   Serial.println(x, 6);
