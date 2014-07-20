@@ -2,6 +2,7 @@
 
 	FFT libray
 	Copyright (C) 2010 Didier Longueville
+	Copyright (C) 2014 Enrique Condes
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,27 +19,32 @@
 	
 */
 
-#include "PlainFFT.h"
+#include "arduinoFFT.h"
 
 #define twoPi 6.28318531
 #define fourPi 12.56637061
 
-PlainFFT::PlainFFT(void) 
+arduinoFFT::arduinoFFT(void) 
 {
 /* Constructor */
 }
 
-PlainFFT::~PlainFFT(void)
+arduinoFFT::~arduinoFFT(void)
 { 
 /* Destructor */
 }
 
-uint8_t PlainFFT::Revision(void)
+uint8_t arduinoFFT::Revision(void)
 { 
 	return(FFT_LIB_REV);
 }
 
-void PlainFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t dir) 
+void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t dir)
+{
+	Compute(vReal, vImag, samples, Exponent(samples), dir);
+}
+
+void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir) 
 {
 /* Computes in-place complex-to-complex FFT */
 	/* Reverse bits */
@@ -59,7 +65,7 @@ void PlainFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t d
 	double c1 = -1.0; 
 	double c2 = 0.0;
 	uint8_t l2 = 1;
-	for (uint8_t l = 0; (l < Exponent(samples)); l++) {
+	for (uint8_t l = 0; (l < power); l++) {
 		uint8_t l1 = l2;
 		l2 <<= 1;
 		double u1 = 1.0; 
@@ -93,7 +99,7 @@ void PlainFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t d
 	}
 }
 
-void PlainFFT::ComplexToMagnitude(double *vReal, double *vImag, uint16_t samples) 
+void arduinoFFT::ComplexToMagnitude(double *vReal, double *vImag, uint16_t samples) 
 {
 /* vM is half the size of vReal and vImag */
 	for (uint8_t i = 0; i < samples; i++) {
@@ -101,7 +107,7 @@ void PlainFFT::ComplexToMagnitude(double *vReal, double *vImag, uint16_t samples
 	}
 }
 
-void PlainFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir) 
+void arduinoFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir) 
 {
 /* Weighing factors are computed once before multiple use of FFT */
 /* The weighing function is symetric; half the weighs are recorded */
@@ -145,7 +151,7 @@ void PlainFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, ui
 	}
 }
 
-double PlainFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequency) 
+double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequency) 
 {
 	double maxY = 0;
 	uint16_t IndexOfMaxY = 0;
@@ -165,14 +171,14 @@ double PlainFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequenc
 
 /* Private functions */
 
-void PlainFFT::Swap(double *x, double *y) 
+void arduinoFFT::Swap(double *x, double *y) 
 {
 	double temp = *x;
 	*x = *y;
 	*y = temp;
 }
 
-uint8_t PlainFFT::Exponent(uint16_t value) 
+uint8_t arduinoFFT::Exponent(uint16_t value) 
 {
 	/* Computes the Exponent of a powered 2 value */
 	uint8_t result = 0;

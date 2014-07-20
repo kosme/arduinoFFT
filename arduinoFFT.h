@@ -2,6 +2,7 @@
 
 	FFT libray
 	Copyright (C) 2010 Didier Longueville
+	Copyright (C) 2014 Enrique Condes
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,8 +19,8 @@
 	
 */
 
-#ifndef PlainFFT_h /* Prevent loading library twice */
-#define PlainFFT_h
+#ifndef arduinoFFT_h /* Prevent loading library twice */
+#define arduinoFFT_h
 
 #if ARDUINO >= 100
 	#include "Arduino.h";
@@ -27,7 +28,7 @@
 	#include "WProgram.h" /* This is where the standard Arduino code lies */
 #endif
 
-#define FFT_LIB_REV 0x02
+#define FFT_LIB_REV 0x02a
 /* Custom constants */
 #define FFT_FORWARD 0x01
 #define FFT_REVERSE 0x00
@@ -40,22 +41,23 @@
 #define FFT_WIN_TYP_FLT_TOP 0x05 /* flat top */
 #define FFT_WIN_TYP_WELCH 0x06 /* welch */
 	
-class PlainFFT {
+class arduinoFFT {
 public:
 	/* Constructor */
-	PlainFFT(void);
+	arduinoFFT(void);
 	/* Destructor */
-	~PlainFFT(void);
+	~arduinoFFT(void);
 	/* Functions */
 	void ComplexToMagnitude(double *vReal, double *vImag, uint16_t samples);
 	void Compute(double *vReal, double *vImag, uint16_t samples, uint8_t dir);
+	void Compute(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir);
 	double MajorPeak(double *vD, uint16_t samples, double samplingFrequency);
 	uint8_t Revision(void);
 	void Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir); 
+	uint8_t Exponent(uint16_t value);
 	
 private:
 	/* Functions */
-	uint8_t Exponent(uint16_t value);
 	void Swap(double *x, double *y);
 	
 };
