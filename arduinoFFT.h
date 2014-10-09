@@ -23,7 +23,7 @@
 #define arduinoFFT_h
 
 #if ARDUINO >= 100
-	#include "Arduino.h";
+	#include "Arduino.h"
 #else
 	#include "WProgram.h" /* This is where the standard Arduino code lies */
 #endif
