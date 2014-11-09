@@ -5,11 +5,11 @@ Fast Fourier Transform for Arduino
 
 This is a fork from https://code.google.com/p/makefurt/ which has been abandoned since 2011.
 
-This is a C++ library for Arduino for computing FFT.
+<del>This is a C++ library for Arduino for computing FFT.</del> Now it works both on Arduino and C projects.
 
 Tested on Arduino 1.0.5
 
-Installation
+Installation on Arduino
 --------------------------------------------------------------------------------
 
 To install this library, just place this entire folder as a subfolder in your Arduino installation
@@ -24,7 +24,7 @@ Arduino\libraries\arduinoFTT\keywords.txt 			(the syntax coloring file)
 Arduino\libraries\arduinoFTT\examples     			(the examples in the "open" menu)
 Arduino\libraries\arduinoFTT\readme.md   			(this file)
 
-Building
+Building on Arduino
 --------------------------------------------------------------------------------
 
 After this library is installed, you just have to start the Arduino application.
@@ -34,3 +34,4 @@ To use this library in a sketch, go to the Sketch | Import Library menu and
 select arduinoFTT.  This will add a corresponding line to the top of your sketch:
 
 `#include <arduinoFTT.h>`
+
