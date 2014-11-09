@@ -21,11 +21,19 @@
 
 #ifndef arduinoFFT_h /* Prevent loading library twice */
 #define arduinoFFT_h
-
-#if ARDUINO >= 100
-	#include "Arduino.h"
+#ifdef ARDUINO
+	#if ARDUINO >= 100
+		#include "Arduino.h"
+	#else
+		#include "WProgram.h" /* This is where the standard Arduino code lies */
+	#endif
 #else
-	#include "WProgram.h" /* This is where the standard Arduino code lies */
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <avr/io.h>
+	#include <math.h>
+	#include "defs.h"
+	#include "types.h"
 #endif
 
 #define FFT_LIB_REV 0x02a
