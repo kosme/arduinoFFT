@@ -15,24 +15,24 @@
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
+
 */
 
 #include "arduinoFFT.h"
 
 arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
-/* 
-These values can be changed in order to evaluate the functions 
+/*
+These values can be changed in order to evaluate the functions
 */
 const uint16_t samples = 64; //This value MUST ALWAYS be a power of 2
 double signalFrequency = 1000;
 double samplingFrequency = 5000;
 uint8_t amplitude = 100;
-/* 
-These are the input and output vectors 
+/*
+These are the input and output vectors
 Input vectors receive computed results from FFT
 */
-double vReal[samples]; 
+double vReal[samples];
 double vImag[samples];
 
 #define SCL_INDEX 0x00
@@ -47,13 +47,13 @@ void setup()
   Serial.println("Ready");
 }
 
-void loop() 
+void loop()
 {
   /* Build raw data */
   double cycles = (((samples-1) * signalFrequency) / samplingFrequency); //Number of signal cycles that the sampling will read
-  for (uint8_t i = 0; i < samples; i++) 
+  for (uint8_t i = 0; i < samples; i++)
   {
-    vReal[i] = uint8_t((amplitude * (sin((i * (Theta * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
+    vReal[i] = int8_t((amplitude * (sin((i * (Theta * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
     //vReal[i] = uint8_t((amplitude * (sin((i * (6.2831 * cycles)) / samples) + 1.0)) / 2.0);/* Build data displaced on the Y axis to include only positive values*/
   }
   Serial.println("Data:");
@@ -68,20 +68,20 @@ void loop()
   PrintVector(vImag, samples, SCL_INDEX);
   FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
   Serial.println("Computed magnitudes:");
-  PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);	
+  PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);
   double x = FFT.MajorPeak(vReal, samples, samplingFrequency);
   Serial.println(x, 6);
   while(1); /* Run Once */
   // delay(2000); /* Repeat after delay */
 }
 
-void PrintVector(double *vData, uint8_t bufferSize, uint8_t scaleType) 
+void PrintVector(double *vData, uint8_t bufferSize, uint8_t scaleType)
 {
-  for (uint16_t i = 0; i < bufferSize; i++) 
+  for (uint16_t i = 0; i < bufferSize; i++)
   {
     double abscissa;
     /* Print abscissa value */
-    switch (scaleType) 
+    switch (scaleType)
     {
       case SCL_INDEX:
         abscissa = (i * 1.0);
