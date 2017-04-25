@@ -18,14 +18,14 @@
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
+
 */
 
 #include "arduinoFFT.h"
 
 arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
-/* 
-These values can be changed in order to evaluate the functions 
+/*
+These values can be changed in order to evaluate the functions
 */
 
 const uint16_t samples = 64;
@@ -36,11 +36,11 @@ const double startFrequency = 2;
 const double stopFrequency = 16.4;
 const double step_size = 0.1;
 
-/* 
-These are the input and output vectors 
+/*
+These are the input and output vectors
 Input vectors receive computed results from FFT
 */
-double vReal[samples]; 
+double vReal[samples];
 double vImag[samples];
 
 unsigned long time;
@@ -49,8 +49,6 @@ unsigned long time;
 #define SCL_TIME 0x01
 #define SCL_FREQUENCY 0x02
 
-#define Theta 6.2831 //2*Pi
-
 void setup()
 {
   Serial.begin(115200);
@@ -58,17 +56,17 @@ void setup()
   exponent = FFT.Exponent(samples);
 }
 
-void loop() 
+void loop()
 {
   Serial.println("Frequency\tDetected\ttakes (ms)");
   Serial.println("=======================================\n");
-  for(double frequency = startFrequency; frequency<=stopFrequency; frequency+=step_size) 
+  for(double frequency = startFrequency; frequency<=stopFrequency; frequency+=step_size)
   {
     /* Build raw data */
     double cycles = (((samples-1) * frequency) / sampling);
-    for (uint8_t i = 0; i < samples; i++) 
+    for (uint8_t i = 0; i < samples; i++)
     {
-      vReal[i] = uint8_t((amplitude * (sin((i * (Theta * cycles)) / samples))) / 2.0);
+      vReal[i] = uint8_t((amplitude * (sin((i * (twoPi * cycles)) / samples))) / 2.0);
       vImag[i] = 0; //Reset the imaginary values vector for each new frequency
     }
     /*Serial.println("Data:");
@@ -97,13 +95,13 @@ void loop()
   while(1); /* Run Once */
 }
 
-void PrintVector(double *vData, uint8_t bufferSize, uint8_t scaleType) 
+void PrintVector(double *vData, uint8_t bufferSize, uint8_t scaleType)
 {
-  for (uint16_t i = 0; i < bufferSize; i++) 
+  for (uint16_t i = 0; i < bufferSize; i++)
   {
     double abscissa;
     /* Print abscissa value */
-    switch (scaleType) 
+    switch (scaleType)
     {
       case SCL_INDEX:
         abscissa = (i * 1.0);
