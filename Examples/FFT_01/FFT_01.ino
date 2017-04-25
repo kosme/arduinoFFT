@@ -18,6 +18,16 @@
 
 */
 
+/*
+  In this example, the Arduino simulates the sampling of a sinusoidal 1000 Hz
+  signal with an amplitude of 100, sampled at 5000 Hz. Samples are stored
+  inside the vReal array. The samples are windowed according to Hamming
+  function. The FFT is computed using the windowed samples. Then the magnitudes
+  of each of the frequencies that compose the signal are calculated. Finally,
+  the frequency with the highest peak is obtained, being that the main frequency
+  present in the signal.
+*/
+
 #include "arduinoFFT.h"
 
 arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
@@ -54,6 +64,7 @@ void loop()
     vReal[i] = int8_t((amplitude * (sin((i * (twoPi * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
     //vReal[i] = uint8_t((amplitude * (sin((i * (twoPi * cycles)) / samples) + 1.0)) / 2.0);/* Build data displaced on the Y axis to include only positive values*/
   }
+  /* Print the results if the simulated sampling according to time */
   Serial.println("Data:");
   PrintVector(vReal, samples, SCL_TIME);
   FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
