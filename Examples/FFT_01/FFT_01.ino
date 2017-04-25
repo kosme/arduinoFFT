@@ -51,7 +51,7 @@ void loop()
 {
   /* Build raw data */
   double cycles = (((samples-1) * signalFrequency) / samplingFrequency); //Number of signal cycles that the sampling will read
-  for (uint8_t i = 0; i < samples; i++)
+  for (uint16_t i = 0; i < samples; i++)
   {
     vReal[i] = int8_t((amplitude * (sin((i * (Theta * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
     //vReal[i] = uint8_t((amplitude * (sin((i * (6.2831 * cycles)) / samples) + 1.0)) / 2.0);/* Build data displaced on the Y axis to include only positive values*/
