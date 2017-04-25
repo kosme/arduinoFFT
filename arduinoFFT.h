@@ -36,7 +36,7 @@
 	#include "types.h"
 #endif
 
-#define FFT_LIB_REV 0x02a
+#define FFT_LIB_REV 0x02c
 /* Custom constants */
 #define FFT_FORWARD 0x01
 #define FFT_REVERSE 0x00
