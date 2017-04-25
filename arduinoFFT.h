@@ -16,7 +16,7 @@
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
+
 */
 
 #ifndef arduinoFFT_h /* Prevent loading library twice */
@@ -48,7 +48,10 @@
 #define FFT_WIN_TYP_BLACKMAN 0x04 /* blackmann */
 #define FFT_WIN_TYP_FLT_TOP 0x05 /* flat top */
 #define FFT_WIN_TYP_WELCH 0x06 /* welch */
-	
+/*Mathematial constants*/
+#define twoPi 6.28318531
+#define fourPi 12.56637061
+
 class arduinoFFT {
 public:
 	/* Constructor */
@@ -61,13 +64,13 @@ public:
 	void Compute(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir);
 	double MajorPeak(double *vD, uint16_t samples, double samplingFrequency);
 	uint8_t Revision(void);
-	void Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir); 
+	void Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir);
 	uint8_t Exponent(uint16_t value);
-	
+
 private:
 	/* Functions */
 	void Swap(double *x, double *y);
-	
+
 };
 
 #endif

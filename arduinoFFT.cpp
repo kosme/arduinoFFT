@@ -16,26 +16,23 @@
 
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
+
 */
 
 #include "arduinoFFT.h"
 
-#define twoPi 6.28318531
-#define fourPi 12.56637061
-
-arduinoFFT::arduinoFFT(void) 
+arduinoFFT::arduinoFFT(void)
 {
 /* Constructor */
 }
 
 arduinoFFT::~arduinoFFT(void)
-{ 
+{
 /* Destructor */
 }
 
 uint8_t arduinoFFT::Revision(void)
-{ 
+{
 	return(FFT_LIB_REV);
 }
 
@@ -44,7 +41,7 @@ void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t
 	Compute(vReal, vImag, samples, Exponent(samples), dir);
 }
 
-void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir) 
+void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir)
 {
 /* Computes in-place complex-to-complex FFT */
 	/* Reverse bits */
@@ -62,20 +59,20 @@ void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t
 		j += k;
 	}
 	/* Compute the FFT  */
-	double c1 = -1.0; 
+	double c1 = -1.0;
 	double c2 = 0.0;
 	uint8_t l2 = 1;
 	for (uint8_t l = 0; (l < power); l++) {
 		uint8_t l1 = l2;
 		l2 <<= 1;
-		double u1 = 1.0; 
+		double u1 = 1.0;
 		double u2 = 0.0;
 		for (j = 0; j < l1; j++) {
 			 for (uint16_t i = j; i < samples; i += l2) {
 					uint16_t i1 = i + l1;
 					double t1 = u1 * vReal[i1] - u2 * vImag[i1];
 					double t2 = u1 * vImag[i1] + u2 * vReal[i1];
-					vReal[i1] = vReal[i] - t1; 
+					vReal[i1] = vReal[i] - t1;
 					vImag[i1] = vImag[i] - t2;
 					vReal[i] += t1;
 					vImag[i] += t2;
@@ -84,7 +81,7 @@ void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t
 			 u2 = ((u1 * c2) + (u2 * c1));
 			 u1 = z;
 		}
-		c2 = sqrt((1.0 - c1) / 2.0); 
+		c2 = sqrt((1.0 - c1) / 2.0);
 		if (dir == FFT_FORWARD) {
 			c2 = -c2;
 		}
@@ -99,7 +96,7 @@ void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t
 	}
 }
 
-void arduinoFFT::ComplexToMagnitude(double *vReal, double *vImag, uint16_t samples) 
+void arduinoFFT::ComplexToMagnitude(double *vReal, double *vImag, uint16_t samples)
 {
 /* vM is half the size of vReal and vImag */
 	for (uint8_t i = 0; i < samples; i++) {
@@ -107,7 +104,7 @@ void arduinoFFT::ComplexToMagnitude(double *vReal, double *vImag, uint16_t sampl
 	}
 }
 
-void arduinoFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir) 
+void arduinoFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir)
 {
 /* Weighing factors are computed once before multiple use of FFT */
 /* The weighing function is symetric; half the weighs are recorded */
@@ -145,13 +142,13 @@ void arduinoFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, 
 			vData[samples - (i + 1)] *= weighingFactor;
 		}
 		else {
-			vData[i] /= weighingFactor;		
+			vData[i] /= weighingFactor;
 			vData[samples - (i + 1)] /= weighingFactor;
 		}
 	}
 }
 
-double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequency) 
+double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequency)
 {
 	double maxY = 0;
 	uint16_t IndexOfMaxY = 0;
@@ -171,14 +168,14 @@ double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFreque
 
 /* Private functions */
 
-void arduinoFFT::Swap(double *x, double *y) 
+void arduinoFFT::Swap(double *x, double *y)
 {
 	double temp = *x;
 	*x = *y;
 	*y = temp;
 }
 
-uint8_t arduinoFFT::Exponent(uint16_t value) 
+uint8_t arduinoFFT::Exponent(uint16_t value)
 {
 	/* Computes the Exponent of a powered 2 value */
 	uint8_t result = 0;
