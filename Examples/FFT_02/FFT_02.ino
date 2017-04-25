@@ -64,9 +64,9 @@ void loop()
   {
     /* Build raw data */
     double cycles = (((samples-1) * frequency) / sampling);
-    for (uint8_t i = 0; i < samples; i++)
+    for (uint16_t i = 0; i < samples; i++)
     {
-      vReal[i] = uint8_t((amplitude * (sin((i * (twoPi * cycles)) / samples))) / 2.0);
+      vReal[i] = int8_t((amplitude * (sin((i * (twoPi * cycles)) / samples))) / 2.0);
       vImag[i] = 0; //Reset the imaginary values vector for each new frequency
     }
     /*Serial.println("Data:");
