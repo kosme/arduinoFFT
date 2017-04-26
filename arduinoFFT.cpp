@@ -177,7 +177,7 @@ void arduinoFFT::Swap(double *x, double *y)
 
 uint8_t arduinoFFT::Exponent(uint16_t value)
 {
-	/* Computes the Exponent of a powered 2 value */
+	/* Calculates the base 2 logarithm of a value */
 	uint8_t result = 0;
 	while (((value >> result) & 1) != 1) result++;
 	return(result);

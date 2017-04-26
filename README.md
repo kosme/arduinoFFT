@@ -37,3 +37,29 @@ select arduinoFTT.  This will add a corresponding line to the top of your sketch
 * Document windowing functions advantages and disadvantages.
 * Optimize usage and arguments.
 * Add new windowing functions.
+
+### API
+
+* **arduinoFFT**(void);
+Constructor
+* **~arduinoFFT**(void);
+Destructor
+* **ComplexToMagnitude**(double *vReal, double *vImag, uint16_t samples);
+* **Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t dir);
+Calculates the power value according to **Exponent** and calcuates the Fast Fourier Transform.
+* **Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir);
+Calcuates the Fast Fourier Transform.
+* **MajorPeak**(double *vD, uint16_t samples, double samplingFrequency);
+* **Revision**(void);
+Returns the library revision.
+* **Windowing**(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir);
+Performs a windowing function on the values array. The possible windowing options are:
+    * FFT_WIN_TYP_RECTANGLE
+    * FFT_WIN_TYP_HAMMING
+    * FFT_WIN_TYP_HANN
+    * FFT_WIN_TYP_TRIANGLE
+    * FFT_WIN_TYP_BLACKMAN
+    * FFT_WIN_TYP_FLT_TOP
+    * FFT_WIN_TYP_WELCH
+* **Exponent**(uint16_t value);
+Calculates and returns the base 2 logarithm of the given value.
