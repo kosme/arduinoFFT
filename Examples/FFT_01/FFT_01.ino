@@ -64,7 +64,7 @@ void loop()
     vReal[i] = int8_t((amplitude * (sin((i * (twoPi * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
     //vReal[i] = uint8_t((amplitude * (sin((i * (twoPi * cycles)) / samples) + 1.0)) / 2.0);/* Build data displaced on the Y axis to include only positive values*/
   }
-  /* Print the results if the simulated sampling according to time */
+  /* Print the results of the simulated sampling according to time */
   Serial.println("Data:");
   PrintVector(vReal, samples, SCL_TIME);
   FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
