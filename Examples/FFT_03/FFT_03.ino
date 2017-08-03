@@ -26,7 +26,7 @@ These values can be changed in order to evaluate the functions
 */
 #define CHANNEL A0
 const uint16_t samples = 64; //This value MUST ALWAYS be a power of 2
-double samplingFrequency = 200;
+const double samplingFrequency = 200;
 
 unsigned int delayTime = 0;
 

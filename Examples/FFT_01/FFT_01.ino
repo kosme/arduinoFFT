@@ -35,9 +35,9 @@ arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
 These values can be changed in order to evaluate the functions
 */
 const uint16_t samples = 64; //This value MUST ALWAYS be a power of 2
-double signalFrequency = 1000;
-double samplingFrequency = 5000;
-uint8_t amplitude = 100;
+const double signalFrequency = 1000;
+const double samplingFrequency = 5000;
+const uint8_t amplitude = 100;
 /*
 These are the input and output vectors
 Input vectors receive computed results from FFT
