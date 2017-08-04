@@ -61,9 +61,9 @@ void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t
 	/* Compute the FFT  */
 	double c1 = -1.0;
 	double c2 = 0.0;
-	uint8_t l2 = 1;
+	uint16_t l2 = 1;
 	for (uint8_t l = 0; (l < power); l++) {
-		uint8_t l1 = l2;
+		uint16_t l1 = l2;
 		l2 <<= 1;
 		double u1 = 1.0;
 		double u2 = 0.0;
@@ -99,7 +99,7 @@ void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples, uint8_t
 void arduinoFFT::ComplexToMagnitude(double *vReal, double *vImag, uint16_t samples)
 {
 /* vM is half the size of vReal and vImag */
-	for (uint8_t i = 0; i < samples; i++) {
+	for (uint16_t i = 0; i < samples; i++) {
 		vReal[i] = sqrt(sq(vReal[i]) + sq(vImag[i]));
 	}
 }

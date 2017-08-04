@@ -81,7 +81,7 @@ void loop()
 
 }
 
-void PrintVector(double *vData, uint8_t bufferSize, uint8_t scaleType)
+void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType)
 {
   for (uint16_t i = 0; i < bufferSize; i++)
   {
