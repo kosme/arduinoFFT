@@ -37,6 +37,7 @@ select arduinoFTT.  This will add a corresponding line to the top of your sketch
 * Document windowing functions advantages and disadvantages.
 * Optimize usage and arguments.
 * Add new windowing functions.
+* Spectrum table?
 
 ### API
 
