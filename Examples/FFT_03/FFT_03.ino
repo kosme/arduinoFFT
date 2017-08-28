@@ -56,6 +56,7 @@ void loop()
   for(uint16_t i =0;i<samples;i++)
   {
     vReal[i] = double(analogRead(CHANNEL));
+    vImag[i] = 0.0; //Imaginary part must be zeroed in case of looping to avoid wrong calculations and overflows
     if(samplingFrequency<=1000)
       delay(delayTime);
     else
