@@ -30,7 +30,9 @@
 #else
 	#include <stdlib.h>
 	#include <stdio.h>
-	#include <avr/io.h>
+	#ifdef __AVR__
+		#include <avr/io.h>
+	#endif
 	#include <math.h>
 	#include "defs.h"
 	#include "types.h"
