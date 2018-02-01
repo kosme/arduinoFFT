@@ -45,10 +45,6 @@ double vImag[samples];
 
 unsigned long time;
 
-#define SCL_INDEX 0x00
-#define SCL_TIME 0x01
-#define SCL_FREQUENCY 0x02
-
 void setup()
 {
   Serial.begin(115200);
@@ -70,19 +66,19 @@ void loop()
       vImag[i] = 0; //Reset the imaginary values vector for each new frequency
     }
     /*Serial.println("Data:");
-    PrintVector(vReal, samples, SCL_TIME);*/
+    FFT.PrintSignal(vReal, samples, samplingFrequency);*/
     time=millis();
     FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
     /*Serial.println("Weighed data:");
-    PrintVector(vReal, samples, SCL_TIME);*/
+    FFT.PrintSignal(vReal, samples, samplingFrequency);*/
     FFT.Compute(vReal, vImag, samples, exponent, FFT_FORWARD); /* Compute FFT */
     /*Serial.println("Computed Real values:");
-    PrintVector(vReal, samples, SCL_INDEX);
+    FFT.PrintVector(vReal, samples, samplingFrequency);
     Serial.println("Computed Imaginary values:");
-    PrintVector(vImag, samples, SCL_INDEX);*/
+    FFT.PrintVector(vImag, samples, samplingFrequency);*/
     FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
     /*Serial.println("Computed magnitudes:");
-    PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);	*/
+    FFT.PrintSpectrum(vReal, samples, samplingFrequency);*/
     double x = FFT.MajorPeak(vReal, samples, sampling);
     Serial.print(frequency);
     Serial.print(": \t\t");
@@ -93,30 +89,4 @@ void loop()
     // delay(2000); /* Repeat after delay */
   }
   while(1); /* Run Once */
-}
-
-void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType)
-{
-  for (uint16_t i = 0; i < bufferSize; i++)
-  {
-    double abscissa;
-    /* Print abscissa value */
-    switch (scaleType)
-    {
-      case SCL_INDEX:
-        abscissa = (i * 1.0);
-        break;
-      case SCL_TIME:
-        abscissa = ((i * 1.0) / sampling);
-        break;
-      case SCL_FREQUENCY:
-        abscissa = ((i * 1.0 * sampling) / samples);
-        break;
-    }
-    Serial.print(abscissa, 6);
-    Serial.print(" ");
-    Serial.print(vData[i], 4);
-    Serial.println();
-  }
-  Serial.println();
 }
