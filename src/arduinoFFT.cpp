@@ -148,6 +148,26 @@ void arduinoFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, 
 	}
 }
 
+void arduinoFFT::PrintVector(double *vData, uint16_t samples, double samplingFrequency)
+{
+	PrintArray(vData,samples, samplingFrequency, SCL_INDEX);
+}
+
+void arduinoFFT::PrintSignal(double *vData, uint16_t samples, double samplingFrequency)
+{
+	PrintArray(vData,samples, samplingFrequency, SCL_TIME);
+}
+
+void arduinoFFT::PrintSpectrum(double *vData, uint16_t samples, double samplingFrequency)
+{
+	PrintArray(vData,samples, samplingFrequency, SCL_FREQUENCY);
+}
+
+void arduinoFFT::PlotSpectrum(double *vData, uint16_t samples, double samplingFrequency)
+{
+	PrintArray(vData,samples, samplingFrequency, SCL_PLOT);
+}
+
 double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequency)
 {
 	double maxY = 0;
@@ -166,6 +186,14 @@ double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFreque
 	return(interpolatedX);
 }
 
+uint8_t arduinoFFT::Exponent(uint16_t value)
+{
+	/* Calculates the base 2 logarithm of a value */
+	uint8_t result = 0;
+	while (((value >> result) & 1) != 1) result++;
+	return(result);
+}
+
 /* Private functions */
 
 void arduinoFFT::Swap(double *x, double *y)
@@ -175,10 +203,34 @@ void arduinoFFT::Swap(double *x, double *y)
 	*y = temp;
 }
 
-uint8_t arduinoFFT::Exponent(uint16_t value)
+void arduinoFFT::PrintArray(double *vData, uint16_t samples, double samplingFrequency, uint8_t scaleType)
 {
-	/* Calculates the base 2 logarithm of a value */
-	uint8_t result = 0;
-	while (((value >> result) & 1) != 1) result++;
-	return(result);
+	uint16_t bufferSize = samples;
+	if((scaleType == SCL_FREQUENCY)||(scaleType == SCL_PLOT))
+		bufferSize = bufferSize>>1;
+	for (uint16_t i = 0; i < bufferSize; i++)
+	{
+		double abscissa;
+		switch (scaleType)
+		{
+			case SCL_INDEX:
+				abscissa = (i * 1.0);
+			break;
+			case SCL_TIME:
+				abscissa = ((i * 1.0) / samplingFrequency);
+			break;
+			case SCL_FREQUENCY:
+			case SCL_PLOT:
+				abscissa = ((i * 1.0 * samplingFrequency) / samples);
+			break;
+		}
+		if(scaleType!=SCL_PLOT){
+			Serial.print(abscissa, 6);
+			if(scaleType==SCL_FREQUENCY)
+			Serial.print(" Hz");
+			Serial.print(" ");
+		}
+		Serial.println(vData[i], 4);
+	}
+	Serial.println();
 }
