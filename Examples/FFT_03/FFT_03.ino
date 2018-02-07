@@ -1,7 +1,7 @@
 /*
 
 	Example of use of the FFT libray to compute FFT for a signal sampled through the ADC.
-        Copyright (C) 2017 Enrique Condes
+        Copyright (C) 2018 Enrique Condés and Ragnar Ranøyen Homb
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -25,10 +25,11 @@ arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
 These values can be changed in order to evaluate the functions
 */
 #define CHANNEL A0
-const uint16_t samples = 64; //This value MUST ALWAYS be a power of 2
-const double samplingFrequency = 200;
+const uint16_t SAMPLES = 64; //This value MUST ALWAYS be a power of 2
+const double samplingFrequency = 100; //Hz, must be less than 10000 due to ADC
 
-unsigned int delayTime = 0;
+unsigned int sampling_period_us;
+unsigned long microseconds;
 
 /*
 These are the input and output vectors
@@ -37,30 +38,25 @@ Input vectors receive computed results from FFT
 double vReal[samples];
 double vImag[samples];
 
-#define SCL_INDEX 0x00
-#define SCL_TIME 0x01
-#define SCL_FREQUENCY 0x02
-
 void setup()
 {
-  if(samplingFrequency<=1000)
-    delayTime = 1000/samplingFrequency;
-  else
-    delayTime = 1000000/samplingFrequency;
+  sampling_period_us = round(1000000*(1.0/SAMPLING_FREQUENCY));
   Serial.begin(115200);
   Serial.println("Ready");
 }
 
 void loop()
 {
-  for(uint16_t i =0;i<samples;i++)
+  /*SAMPLING*/
+  for(int i=0; i<SAMPLES; i++)
   {
-    vReal[i] = double(analogRead(CHANNEL));
-    vImag[i] = 0.0; //Imaginary part must be zeroed in case of looping to avoid wrong calculations and overflows
-    if(samplingFrequency<=1000)
-      delay(delayTime);
-    else
-      delayMicroseconds(delayTime);
+      microseconds = micros();    //Overflows after around 70 minutes!
+
+      vReal[i] = analogRead(CHANNEL);
+      vImag[i] = 0;
+      while(micros() < (microseconds + sampling_period_us)){
+        //empty loop
+      }
   }
   /* Print the results of the sampling according to time */
   Serial.println("Data:");
@@ -77,7 +73,7 @@ void loop()
   Serial.println("Computed magnitudes:");
   FFT.PrintSpectrum(vReal, samples, samplingFrequency);
   double x = FFT.MajorPeak(vReal, samples, samplingFrequency);
-  Serial.println(x, 6);
+  Serial.println(x, 6); //Print out what frequency is the most dominant.
   while(1); /* Run Once */
   // delay(2000); /* Repeat after delay */
 }
