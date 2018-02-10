@@ -1,3 +1,9 @@
+02/10/18 v1.4
+Transition version. Minor optimization to functions. New API. Deprecation of old functions.
+
+12/06/18 v1.3
+Add support for mbed development boards.
+
 09/04/17 v1.2.3
 Finally solves the issue of Arduino IDE not correctly detecting and highlighting the keywords.
 

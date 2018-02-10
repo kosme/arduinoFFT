@@ -11,6 +11,10 @@ Tested on Arduino 1.6.11
 
 ### Installation on Arduino
 
+Use the Arduino Library Manager to install and keep it updated. Just look for arduinoFFT. Only for Arduino 1.5+
+
+### Manual installation on Arduino
+
 To install this library, just place this entire folder as a subfolder in your Arduino installation
 
 When installed, this library should look like:
@@ -37,23 +41,28 @@ select arduinoFTT.  This will add a corresponding line to the top of your sketch
 * Document windowing functions advantages and disadvantages.
 * Optimize usage and arguments.
 * Add new windowing functions.
-* Spectrum table?
+<del>* Spectrum table? </del>
 
 ### API
 
 * **arduinoFFT**(void);
+* **arduinoFFT**(double *vReal, double *vImag, uint16_t samples, double samplingFrequency);
 Constructor
 * **~arduinoFFT**(void);
 Destructor
 * **ComplexToMagnitude**(double *vReal, double *vImag, uint16_t samples);
+* **ComplexToMagnitude**();
 * **Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t dir);
-Calculates the power value according to **Exponent** and calcuates the Fast Fourier Transform.
 * **Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir);
+* **Compute**(uint8_t dir);
 Calcuates the Fast Fourier Transform.
 * **MajorPeak**(double *vD, uint16_t samples, double samplingFrequency);
+* **MajorPeak**();
+Looks for and returns the frequency of the biggest spike in the analyzed signal.
 * **Revision**(void);
 Returns the library revision.
 * **Windowing**(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir);
+* **Windowing**(uint8_t windowType, uint8_t dir);
 Performs a windowing function on the values array. The possible windowing options are:
     * FFT_WIN_TYP_RECTANGLE
     * FFT_WIN_TYP_HAMMING
