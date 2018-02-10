@@ -108,15 +108,16 @@ void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType)
         abscissa = (i * 1.0);
 	break;
       case SCL_TIME:
-        abscissa = ((i * 1.0) / samplingFrequency);
+        abscissa = ((i * 1.0) / sampling);
 	break;
       case SCL_FREQUENCY:
-        abscissa = ((i * 1.0 * samplingFrequency) / samples);
+        abscissa = ((i * 1.0 * sampling) / samples);
 	break;
     }
     Serial.print(abscissa, 6);
     if(scaleType==SCL_FREQUENCY)
-      Serial.print(" Hz");
+      Serial.print("Hz");
+    Serial.print(" ");
     Serial.println(vData[i], 4);
   }
   Serial.println();

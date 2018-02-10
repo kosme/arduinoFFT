@@ -25,7 +25,7 @@ arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
 These values can be changed in order to evaluate the functions
 */
 #define CHANNEL A0
-const uint16_t SAMPLES = 64; //This value MUST ALWAYS be a power of 2
+const uint16_t samples = 64; //This value MUST ALWAYS be a power of 2
 const double samplingFrequency = 100; //Hz, must be less than 10000 due to ADC
 
 unsigned int sampling_period_us;
@@ -45,7 +45,7 @@ double vImag[samples];
 
 void setup()
 {
-  sampling_period_us = round(1000000*(1.0/SAMPLING_FREQUENCY));
+  sampling_period_us = round(1000000*(1.0/samplingFrequency));
   Serial.begin(115200);
   Serial.println("Ready");
 }
@@ -53,7 +53,7 @@ void setup()
 void loop()
 {
   /*SAMPLING*/
-  for(int i=0; i<SAMPLES; i++)
+  for(int i=0; i<samples; i++)
   {
       microseconds = micros();    //Overflows after around 70 minutes!
 
@@ -103,7 +103,8 @@ void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType)
     }
     Serial.print(abscissa, 6);
     if(scaleType==SCL_FREQUENCY)
-      Serial.print(" Hz");
+      Serial.print("Hz");
+    Serial.print(" ");
     Serial.println(vData[i], 4);
   }
   Serial.println();

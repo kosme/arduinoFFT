@@ -106,7 +106,8 @@ void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType)
     }
     Serial.print(abscissa, 6);
     if(scaleType==SCL_FREQUENCY)
-      Serial.print(" Hz");
+      Serial.print("Hz");
+    Serial.print(" ");
     Serial.println(vData[i], 4);
   }
   Serial.println();
