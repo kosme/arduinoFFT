@@ -46,6 +46,11 @@ Input vectors receive computed results from FFT
 double vReal[samples];
 double vImag[samples];
 
+#define SCL_INDEX 0x00
+#define SCL_TIME 0x01
+#define SCL_FREQUENCY 0x02
+#define SCL_PLOT 0x03
+
 void setup()
 {
   Serial.begin(115200);
@@ -64,8 +69,36 @@ void loop()
   FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
   FFT.Compute(vReal, vImag, samples, FFT_FORWARD); /* Compute FFT */
   FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
-  FFT.PlotSpectrum(vReal, samples, samplingFrequency);
+  PrintVector(vReal, samples>>1, SCL_PLOT);
   double x = FFT.MajorPeak(vReal, samples, samplingFrequency);
   while(1); /* Run Once */
   // delay(2000); /* Repeat after delay */
+}
+
+void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType)
+{
+  for (uint16_t i = 0; i < bufferSize; i++)
+  {
+    double abscissa;
+    /* Print abscissa value */
+    switch (scaleType)
+    {
+      case SCL_INDEX:
+        abscissa = (i * 1.0);
+	      break;
+      case SCL_TIME:
+        abscissa = ((i * 1.0) / samplingFrequency);
+        break;
+      case SCL_FREQUENCY:
+        abscissa = ((i * 1.0 * samplingFrequency) / samples);
+	      break;
+    }
+    if(scaleType!=SCL_PLOT)
+    {
+      Serial.print(abscissa, 6);
+      Serial.print(" ");
+    }
+    Serial.println(vData[i], 4);
+  }
+  Serial.println();
 }
