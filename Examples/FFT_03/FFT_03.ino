@@ -59,7 +59,7 @@ void loop()
 
       vReal[i] = analogRead(CHANNEL);
       vImag[i] = 0;
-      while(micros() < (microseconds + sampling_period_us)){
+      while(micros() - microseconds < sampling_period_us){
         //empty loop
       }
   }
