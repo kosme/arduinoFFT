@@ -68,7 +68,10 @@ Performs a windowing function on the values array. The possible windowing option
     * FFT_WIN_TYP_HAMMING
     * FFT_WIN_TYP_HANN
     * FFT_WIN_TYP_TRIANGLE
+    * FFT_WIN_TYP_NUTTALL
     * FFT_WIN_TYP_BLACKMAN
+    * FFT_WIN_TYP_BLACKMAN_NUTTALL
+    * FFT_WIN_TYP_BLACKMAN_HARRIS
     * FFT_WIN_TYP_FLT_TOP
     * FFT_WIN_TYP_WELCH
 * **Exponent**(uint16_t value);
