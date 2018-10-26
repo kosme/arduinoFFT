@@ -199,8 +199,17 @@ void arduinoFFT::Windowing(uint8_t windowType, uint8_t dir)
 		case FFT_WIN_TYP_TRIANGLE: // triangle (Bartlett)
 			weighingFactor = 1.0 - ((2.0 * abs(indexMinusOne - (samplesMinusOne / 2.0))) / samplesMinusOne);
 			break;
-		case FFT_WIN_TYP_BLACKMAN: // blackmann
+		case FFT_WIN_TYP_NUTTALL: // nuttall
+			weighingFactor = 0.355768 - (0.487396 * (cos(twoPi * ratio))) + (0.144232 * (cos(fourPi * ratio))) - (0.012604 * (cos(sixPi * ratio)));
+			break;
+		case FFT_WIN_TYP_BLACKMAN: // blackman
 			weighingFactor = 0.42323 - (0.49755 * (cos(twoPi * ratio))) + (0.07922 * (cos(fourPi * ratio)));
+			break;
+		case FFT_WIN_TYP_BLACKMAN_NUTTALL: // blackman nuttall
+			weighingFactor = 0.3635819 - (0.4891775 * (cos(twoPi * ratio))) + (0.1365995 * (cos(fourPi * ratio))) - (0.0106411 * (cos(sixPi * ratio)));
+			break;
+		case FFT_WIN_TYP_BLACKMAN_HARRIS: // blackman harris
+			weighingFactor = 0.35875 - (0.48829 * (cos(twoPi * ratio))) + (0.14128 * (cos(fourPi * ratio))) - (0.01168 * (cos(sixPi * ratio)));
 			break;
 		case FFT_WIN_TYP_FLT_TOP: // flat top
 			weighingFactor = 0.2810639 - (0.5208972 * cos(twoPi * ratio)) + (0.1980399 * cos(fourPi * ratio));
@@ -244,8 +253,17 @@ void arduinoFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, 
 		case FFT_WIN_TYP_TRIANGLE: // triangle (Bartlett)
 			weighingFactor = 1.0 - ((2.0 * abs(indexMinusOne - (samplesMinusOne / 2.0))) / samplesMinusOne);
 			break;
-		case FFT_WIN_TYP_BLACKMAN: // blackmann
+		case FFT_WIN_TYP_NUTTALL: // nuttall
+			weighingFactor = 0.355768 - (0.487396 * (cos(twoPi * ratio))) + (0.144232 * (cos(fourPi * ratio))) - (0.012604 * (cos(sixPi * ratio)));
+			break;
+		case FFT_WIN_TYP_BLACKMAN: // blackman
 			weighingFactor = 0.42323 - (0.49755 * (cos(twoPi * ratio))) + (0.07922 * (cos(fourPi * ratio)));
+			break;
+		case FFT_WIN_TYP_BLACKMAN_NUTTALL: // blackman nuttall
+			weighingFactor = 0.3635819 - (0.4891775 * (cos(twoPi * ratio))) + (0.1365995 * (cos(fourPi * ratio))) - (0.0106411 * (cos(sixPi * ratio)));
+			break;
+		case FFT_WIN_TYP_BLACKMAN_HARRIS: // blackman harris
+			weighingFactor = 0.35875 - (0.48829 * (cos(twoPi * ratio))) + (0.14128 * (cos(fourPi * ratio))) - (0.01168 * (cos(sixPi * ratio)));
 			break;
 		case FFT_WIN_TYP_FLT_TOP: // flat top
 			weighingFactor = 0.2810639 - (0.5208972 * cos(twoPi * ratio)) + (0.1980399 * cos(fourPi * ratio));
