@@ -177,6 +177,39 @@ void arduinoFFT::ComplexToMagnitude(double *vReal, double *vImag, uint16_t sampl
 	}
 }
 
+void arduinoFFT::DCRemoval()
+{
+	// calculate the mean of vData
+	double mean = 0;
+	for (uint16_t i = 1; i < ((this->_samples >> 1) + 1); i++)
+	{
+		mean += this->_vReal[i];
+	}
+	mean /= this->_samples;
+	// Subtract the mean from vData
+	for (uint16_t i = 1; i < ((this->_samples >> 1) + 1); i++)
+	{
+		this->_vReal[i] -= mean;
+	}
+}
+
+void arduinoFFT::DCRemoval(double *vData, uint16_t samples)
+{
+	// calculate the mean of vData
+	#warning("This method is deprecated and will be removed on future revisions.")
+	double mean = 0;
+	for (uint16_t i = 1; i < ((samples >> 1) + 1); i++)
+	{
+		mean += vData[i];
+	}
+	mean /= samples;
+	// Subtract the mean from vData
+	for (uint16_t i = 1; i < ((samples >> 1) + 1); i++)
+	{
+		vData[i] -= mean;
+	}
+}
+
 void arduinoFFT::Windowing(uint8_t windowType, uint8_t dir)
 {// Weighing factors are computed once before multiple use of FFT
 // The weighing function is symetric; half the weighs are recorded

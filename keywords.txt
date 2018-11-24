@@ -14,6 +14,7 @@ arduinoFFT	KEYWORD1
 
 ComplexToMagnitude	KEYWORD2
 Compute	KEYWORD2
+DCRemoval	KEYWORD2
 Windowing	KEYWORD2
 Exponent	KEYWORD2
 Revision	KEYWORD2
