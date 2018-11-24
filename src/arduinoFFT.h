@@ -75,7 +75,6 @@ public:
 	void DCRemoval(double *vData, uint16_t samples);
 	double MajorPeak(double *vD, uint16_t samples, double samplingFrequency);
 	void Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir);
-	void Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir, uint8_t a);
 	void ComplexToMagnitude();
 	void Compute(uint8_t dir);
 	void DCRemoval();
