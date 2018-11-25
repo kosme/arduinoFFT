@@ -72,10 +72,12 @@ public:
 	void ComplexToMagnitude(double *vReal, double *vImag, uint16_t samples);
 	void Compute(double *vReal, double *vImag, uint16_t samples, uint8_t dir);
 	void Compute(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir);
+	void DCRemoval(double *vData, uint16_t samples);
 	double MajorPeak(double *vD, uint16_t samples, double samplingFrequency);
 	void Windowing(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir);
 	void ComplexToMagnitude();
 	void Compute(uint8_t dir);
+	void DCRemoval();
 	double MajorPeak();
 	void Windowing(uint8_t windowType, uint8_t dir);
 
