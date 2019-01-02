@@ -81,6 +81,10 @@ public:
 	double MajorPeak();
 	void Windowing(uint8_t windowType, uint8_t dir);
 
+	void MajorPeak(double *f, double *v);
+	void MajorPeak(double *vD, uint16_t samples, double samplingFrequency, double *f, double *v);
+
+
 private:
 	/* Variables */
 	uint16_t _samples;

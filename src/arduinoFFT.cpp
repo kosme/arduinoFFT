@@ -334,8 +334,31 @@ double arduinoFFT::MajorPeak()
 	double interpolatedX = ((IndexOfMaxY + delta)  * this->_samplingFrequency) / (this->_samples-1);
 	if(IndexOfMaxY==(this->_samples >> 1)) //To improve calculation on edge values
 		interpolatedX = ((IndexOfMaxY + delta)  * this->_samplingFrequency) / (this->_samples);
-	// retuned value: interpolated frequency peak apex
+	// returned value: interpolated frequency peak apex
 	return(interpolatedX);
+}
+
+void arduinoFFT::MajorPeak(double *f, double *v)
+{
+	double maxY = 0;
+	uint16_t IndexOfMaxY = 0;
+	//If sampling_frequency = 2 * max_frequency in signal,
+	//value would be stored at position samples/2
+	for (uint16_t i = 1; i < ((this->_samples >> 1) + 1); i++) {
+		if ((this->_vReal[i - 1] < this->_vReal[i]) && (this->_vReal[i] > this->_vReal[i + 1])) {
+			if (this->_vReal[i] > maxY) {
+				maxY = this->_vReal[i];
+				IndexOfMaxY = i;
+			}
+		}
+	}
+	double delta = 0.5 * ((this->_vReal[IndexOfMaxY - 1] - this->_vReal[IndexOfMaxY + 1]) / (this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]));
+	double interpolatedX = ((IndexOfMaxY + delta)  * this->_samplingFrequency) / (this->_samples - 1);
+	if (IndexOfMaxY == (this->_samples >> 1)) //To improve calculation on edge values
+		interpolatedX = ((IndexOfMaxY + delta)  * this->_samplingFrequency) / (this->_samples);
+	// returned value: interpolated frequency peak apex
+	*f = interpolatedX;
+	*v = abs(this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]);
 }
 
 double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequency)
@@ -359,6 +382,31 @@ double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFreque
 		interpolatedX = ((IndexOfMaxY + delta)  * samplingFrequency) / (samples);
 	// returned value: interpolated frequency peak apex
 	return(interpolatedX);
+}
+
+void arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequency, double *f, double *v)
+{
+	#warning("This method is deprecated and will be removed on future revisions.")
+	double maxY = 0;
+	uint16_t IndexOfMaxY = 0;
+	//If sampling_frequency = 2 * max_frequency in signal,
+	//value would be stored at position samples/2
+	for (uint16_t i = 1; i < ((samples >> 1) + 1); i++) {
+		if ((vD[i - 1] < vD[i]) && (vD[i] > vD[i + 1])) {
+			if (vD[i] > maxY) {
+				maxY = vD[i];
+				IndexOfMaxY = i;
+			}
+		}
+	}
+	double delta = 0.5 * ((vD[IndexOfMaxY - 1] - vD[IndexOfMaxY + 1]) / (vD[IndexOfMaxY - 1] - (2.0 * vD[IndexOfMaxY]) + vD[IndexOfMaxY + 1]));
+	double interpolatedX = ((IndexOfMaxY + delta)  * samplingFrequency) / (samples - 1);
+	//double popo =
+	if (IndexOfMaxY == (samples >> 1)) //To improve calculation on edge values
+		interpolatedX = ((IndexOfMaxY + delta)  * samplingFrequency) / (samples);
+	// returned value: interpolated frequency peak apex
+	*f = interpolatedX;
+	*v = abs(vD[IndexOfMaxY - 1] - (2.0 * vD[IndexOfMaxY]) + vD[IndexOfMaxY + 1]);
 }
 
 uint8_t arduinoFFT::Exponent(uint16_t value)
