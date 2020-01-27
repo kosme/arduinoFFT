@@ -1,4 +1,4 @@
-01/24/20 v1.5.5
+01/27/20 v1.5.5
 Lookup table for constants c1 and c2 used during FFT comupting. This increases the FFT computing speed in around 5%.
 
 02/10/18 v1.4
