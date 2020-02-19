@@ -4,7 +4,9 @@
         The exponent is calculated once before the excecution since it is a constant.
         This saves resources during the excecution of the sketch and reduces the compiled size.
         The sketch shows the time that the computing is taking.
-        Copyright (C) 2014 Enrique Condes
+        
+  Copyright (C) 2014 Enrique Condes
+  Copyright (C) 2020 Bim Overbohm (header-only, template, speed improvements)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,15 +25,12 @@
 
 #include "arduinoFFT.h"
 
-arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
 /*
 These values can be changed in order to evaluate the functions
 */
-
 const uint16_t samples = 64;
 const double sampling = 40;
 const uint8_t amplitude = 4;
-uint8_t exponent;
 const double startFrequency = 2;
 const double stopFrequency = 16.4;
 const double step_size = 0.1;
@@ -42,6 +41,9 @@ Input vectors receive computed results from FFT
 */
 double vReal[samples];
 double vImag[samples];
+
+/* Create FFT object */
+ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, sampling);
 
 unsigned long time;
 
@@ -54,7 +56,6 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("Ready");
-  exponent = FFT.Exponent(samples);
 }
 
 void loop()
@@ -67,24 +68,24 @@ void loop()
     double cycles = (((samples-1) * frequency) / sampling);
     for (uint16_t i = 0; i < samples; i++)
     {
-      vReal[i] = int8_t((amplitude * (sin((i * (twoPi * cycles)) / samples))) / 2.0);
+      vReal[i] = int8_t((amplitude * (sin((i * (TWO_PI * cycles)) / samples))) / 2.0);
       vImag[i] = 0; //Reset the imaginary values vector for each new frequency
     }
     /*Serial.println("Data:");
     PrintVector(vReal, samples, SCL_TIME);*/
     time=millis();
-    FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
+    FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward);	/* Weigh data */
     /*Serial.println("Weighed data:");
     PrintVector(vReal, samples, SCL_TIME);*/
-    FFT.Compute(vReal, vImag, samples, exponent, FFT_FORWARD); /* Compute FFT */
+    FFT.compute(FFTDirection::Forward); /* Compute FFT */
     /*Serial.println("Computed Real values:");
     PrintVector(vReal, samples, SCL_INDEX);
     Serial.println("Computed Imaginary values:");
     PrintVector(vImag, samples, SCL_INDEX);*/
-    FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
+    FFT.complexToMagnitude(); /* Compute magnitudes */
     /*Serial.println("Computed magnitudes:");
     PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);*/
-    double x = FFT.MajorPeak(vReal, samples, sampling);
+    double x = FFT.majorPeak();
     Serial.print(frequency);
     Serial.print(": \t\t");
     Serial.print(x, 4);

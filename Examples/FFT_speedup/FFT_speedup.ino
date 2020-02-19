@@ -1,9 +1,9 @@
 /*
 
-	Example of use of the FFT libray
+	Example of use of the FFT libray to compute FFT for a signal sampled through the ADC
+    with speedup through different arduinoFFT options. Based on examples/FFT_03/FFT_03.ino
   
-  Copyright (C) 2014 Enrique Condes
-  Copyright (C) 2020 Bim Overbohm (header-only, template, speed improvements)
+    Copyright (C) 2020 Bim Overbohm (header-only, template, speed improvements)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -20,35 +20,41 @@
 
 */
 
-/*
-  In this example, the Arduino simulates the sampling of a sinusoidal 1000 Hz
-  signal with an amplitude of 100, sampled at 5000 Hz. Samples are stored
-  inside the vReal array. The samples are windowed according to Hamming
-  function. The FFT is computed using the windowed samples. Then the magnitudes
-  of each of the frequencies that compose the signal are calculated. Finally,
-  the frequency with the highest peak is obtained, being that the main frequency
-  present in the signal.
-*/
+// There are two speedup options for some of the FFT code:
+
+// Define this to use reciprocal multiplication for division and some more speedups that might decrease precision
+//#define FFT_SPEED_OVER_PRECISION
+
+// Define this to use a low-precision square root approximation instead of the regular sqrt() call
+// This might only work for specific use cases, but is significantly faster. Only works for ArduinoFFT<float>.
+//#define FFT_SQRT_APPROXIMATION
 
 #include "arduinoFFT.h"
 
 /*
 These values can be changed in order to evaluate the functions
 */
+#define CHANNEL A0
 const uint16_t samples = 64; //This value MUST ALWAYS be a power of 2
-const double signalFrequency = 1000;
-const double samplingFrequency = 5000;
-const uint8_t amplitude = 100;
+const float samplingFrequency = 100; //Hz, must be less than 10000 due to ADC
+unsigned int sampling_period_us;
+unsigned long microseconds;
 
 /*
 These are the input and output vectors
 Input vectors receive computed results from FFT
 */
-double vReal[samples];
-double vImag[samples];
+float vReal[samples];
+float vImag[samples];
 
-/* Create FFT object */
-ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, samplingFrequency);
+/*
+Allocate space for FFT window weighing factors, so they are calculated only the first time windowing() is called.
+If you don't do this, a lot of calculations are necessary, depending on the window function.
+*/
+float weighingFactors[samples];
+
+/* Create FFT object with weighing factor storage */
+ArduinoFFT<float> FFT = ArduinoFFT<float>(vReal, vImag, samples, samplingFrequency, weighingFactors);
 
 #define SCL_INDEX 0x00
 #define SCL_TIME 0x01
@@ -57,21 +63,25 @@ ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, samplingFrequ
 
 void setup()
 {
+  sampling_period_us = round(1000000*(1.0/samplingFrequency));
   Serial.begin(115200);
   Serial.println("Ready");
 }
 
 void loop()
 {
-  /* Build raw data */
-  double cycles = (((samples-1) * signalFrequency) / samplingFrequency); //Number of signal cycles that the sampling will read
-  for (uint16_t i = 0; i < samples; i++)
+  /*SAMPLING*/
+  microseconds = micros();
+  for(int i=0; i<samples; i++)
   {
-    vReal[i] = int8_t((amplitude * (sin((i * (TWO_PI * cycles)) / samples))) / 2.0);/* Build data with positive and negative values*/
-    //vReal[i] = uint8_t((amplitude * (sin((i * (twoPi * cycles)) / samples) + 1.0)) / 2.0);/* Build data displaced on the Y axis to include only positive values*/
-    vImag[i] = 0.0; //Imaginary part must be zeroed in case of looping to avoid wrong calculations and overflows
+      vReal[i] = analogRead(CHANNEL);
+      vImag[i] = 0;
+      while(micros() - microseconds < sampling_period_us){
+        //empty loop
+      }
+      microseconds += sampling_period_us;
   }
-  /* Print the results of the simulated sampling according to time */
+  /* Print the results of the sampling according to time */
   Serial.println("Data:");
   PrintVector(vReal, samples, SCL_TIME);
   FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward);	/* Weigh data */
@@ -85,17 +95,17 @@ void loop()
   FFT.complexToMagnitude(); /* Compute magnitudes */
   Serial.println("Computed magnitudes:");
   PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);
-  double x = FFT.majorPeak();
-  Serial.println(x, 6);
+  float x = FFT.majorPeak();
+  Serial.println(x, 6); //Print out what frequency is the most dominant.
   while(1); /* Run Once */
   // delay(2000); /* Repeat after delay */
 }
 
-void PrintVector(double *vData, uint16_t bufferSize, uint8_t scaleType)
+void PrintVector(float *vData, uint16_t bufferSize, uint8_t scaleType)
 {
   for (uint16_t i = 0; i < bufferSize; i++)
   {
-    double abscissa;
+    float abscissa;
     /* Print abscissa value */
     switch (scaleType)
     {
