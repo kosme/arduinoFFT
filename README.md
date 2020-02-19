@@ -48,7 +48,7 @@ The type `T` can be `float` or `double`. `vReal` and `vImag` are pointers to arr
 * **~ArduinoFFT**(void);  
 Destructor.
 * **complexToMagnitude**();  
-Convert complex values to their magnitude and store in vReal. 
+Convert complex values to their magnitude and store in vReal.
 * **compute**(FFTDirection dir);  
 Calcuates the Fast Fourier Transform.
 * **dcRemoval**();  
@@ -57,7 +57,7 @@ Removes the DC component from the sample data.
 Looks for and returns the frequency of the biggest spike in the analyzed signal.
 * **revision**();  
 Returns the library revision.
-* **windowing**(FFTWindow windowType, FFTDirection dir);  
+* **windowing**(FFTWindow windowType, FFTDirection dir, bool withCompensation = false);  
 Performs a windowing function on the values array. The possible windowing options are:
   * Rectangle
   * Hamming
@@ -66,9 +66,21 @@ Performs a windowing function on the values array. The possible windowing option
   * Nuttall
   * Blackman
   * Blackman_Nuttall
-  * Blackman_Harris	
+  * Blackman_Harris
   * Flat_top
   * Welch
+
+  If `withCompensation` == true, the following compensation factors are used:
+  * Rectangle: 1.0 * 2.0
+  * Hamming: 1.8549343278 * 2.0
+  * Hann: 1.8554726898 * 2.0
+  * Triangle: 2.0039186079 * 2.0
+  * Nuttall: 2.8163172034 * 2.0
+  * Blackman: 2.3673474360 * 2.0
+  * Blackman Nuttall: 2.7557840395 * 2.0
+  * Blackman Harris: 2.7929062517 * 2.0
+  * Flat top: 3.5659039231 * 2.0
+  * Welch: 1.5029392863 * 2.0
 
 ## Special flags
 

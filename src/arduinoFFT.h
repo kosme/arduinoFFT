@@ -208,10 +208,12 @@ public:
 		}
 	}
 
-	void windowing(FFTWindow windowType, FFTDirection dir)
+	void windowing(FFTWindow windowType, FFTDirection dir, bool withCompensation = false)
 	{
-		// check if values are already pre-computed for the correct window type
-		if (_windowWeighingFactors && weighingFactorsComputed && weighingFactorsFFTWindow == windowType)
+		// check if values are already pre-computed for the correct window type and compensation
+		if (_windowWeighingFactors && _weighingFactorsComputed && 
+			_weighingFactorsFFTWindow == windowType && 
+			_weighingFactorsWithCompensation == withCompensation)
 		{
 			// yes. values are precomputed
 			if (dir == FFTDirection::Forward)
@@ -242,6 +244,7 @@ public:
 		{
 			// no. values need to be pre-computed or applied
 			T samplesMinusOne = (T(this->_samples) - 1.0);
+			T compensationFactor = _WindowCompensationFactors[static_cast<uint_fast8_t>(windowType)];
 			for (uint_fast16_t i = 0; i < (this->_samples >> 1); i++)
 			{
 				T indexMinusOne = T(i);
@@ -281,6 +284,10 @@ public:
 					weighingFactor = 1.0 - sq((indexMinusOne - samplesMinusOne / 2.0) / (samplesMinusOne / 2.0));
 					break;
 				}
+				if (withCompensation)
+				{
+					weighingFactor *= compensationFactor;
+				}
 				if (_windowWeighingFactors)
 				{
 					_windowWeighingFactors[i] = weighingFactor;
@@ -304,8 +311,9 @@ public:
 				}
 			}
 			// mark cached values as pre-computed
-			weighingFactorsFFTWindow = windowType;
-			weighingFactorsComputed = true;
+			_weighingFactorsFFTWindow = windowType;
+			_weighingFactorsWithCompensation = withCompensation;
+			_weighingFactorsComputed = true;
 		}
 	}
 
@@ -381,6 +389,18 @@ private:
 		0.0003834952, 0.0001917476, 0.0000958738, 0.0000479369,
 		0.0000239684};
 #endif
+	static constexpr T _WindowCompensationFactors[10] = {
+		1.0000000000 * 2.0,	/* rectangle (Box car) */
+		1.8549343278 * 2.0, /* hamming */
+		1.8554726898 * 2.0, /* hann */
+		2.0039186079 * 2.0, /* triangle (Bartlett) */
+		2.8163172034 * 2.0, /* nuttall */
+		2.3673474360 * 2.0, /* blackman */
+		2.7557840395 * 2.0, /* blackman nuttall */
+		2.7929062517 * 2.0, /* blackman harris*/
+		3.5659039231 * 2.0, /* flat top */
+		1.5029392863 * 2.0  /* welch */
+	};
 
 	// Mathematial constants
 #ifndef TWO_PI
@@ -431,8 +451,9 @@ private:
 	T *_vReal = nullptr;
 	T *_vImag = nullptr;
 	T * _windowWeighingFactors = nullptr;
-	FFTWindow weighingFactorsFFTWindow;
-	bool weighingFactorsComputed = false;
+	FFTWindow _weighingFactorsFFTWindow;
+	bool _weighingFactorsWithCompensation = false;
+	bool _weighingFactorsComputed = false;
 	uint_fast8_t _power = 0;
 };
 
