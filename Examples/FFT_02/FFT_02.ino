@@ -45,7 +45,7 @@ double vImag[samples];
 /* Create FFT object */
 ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, sampling);
 
-unsigned long time;
+unsigned long startTime;
 
 #define SCL_INDEX 0x00
 #define SCL_TIME 0x01
@@ -73,7 +73,7 @@ void loop()
     }
     /*Serial.println("Data:");
     PrintVector(vReal, samples, SCL_TIME);*/
-    time=millis();
+    startTime=millis();
     FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward);	/* Weigh data */
     /*Serial.println("Weighed data:");
     PrintVector(vReal, samples, SCL_TIME);*/
@@ -90,7 +90,7 @@ void loop()
     Serial.print(": \t\t");
     Serial.print(x, 4);
     Serial.print("\t\t");
-    Serial.print(millis()-time);
+    Serial.print(millis()-startTime);
     Serial.println(" ms");
     // delay(2000); /* Repeat after delay */
   }
