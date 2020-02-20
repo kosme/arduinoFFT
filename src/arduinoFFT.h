@@ -43,13 +43,15 @@
 // Define this to use reciprocal multiplication for division and some more speedups that might decrease precision
 //#define FFT_SPEED_OVER_PRECISION
 
-#ifndef FFT_SQRT_APPROXIMATION
-	#define sqrt_internal sqrt
-#endif
-
 // Define this to use a low-precision square root approximation instead of the regular sqrt() call
 // This might only work for specific use cases, but is significantly faster. Only works for ArduinoFFT<float>.
 //#define FFT_SQRT_APPROXIMATION
+
+#ifdef FFT_SQRT_APPROXIMATION
+	#include <type_traits>
+#else
+	#define sqrt_internal sqrt
+#endif
 
 enum class FFTDirection
 {
@@ -390,16 +392,16 @@ private:
 		0.0000239684};
 #endif
 	static constexpr T _WindowCompensationFactors[10] = {
-		1.0000000000 * 2.0,	/* rectangle (Box car) */
-		1.8549343278 * 2.0, /* hamming */
-		1.8554726898 * 2.0, /* hann */
-		2.0039186079 * 2.0, /* triangle (Bartlett) */
-		2.8163172034 * 2.0, /* nuttall */
-		2.3673474360 * 2.0, /* blackman */
-		2.7557840395 * 2.0, /* blackman nuttall */
-		2.7929062517 * 2.0, /* blackman harris*/
-		3.5659039231 * 2.0, /* flat top */
-		1.5029392863 * 2.0  /* welch */
+		2,				  /* rectangle (Box car) */
+		1.8549343278 * 2, /* hamming */
+		1.8554726898 * 2, /* hann */
+		2.0039186079 * 2, /* triangle (Bartlett) */
+		2.8163172034 * 2, /* nuttall */
+		2.367347436 * 2,  /* blackman */
+		2.7557840395 * 2, /* blackman nuttall */
+		2.7929062517 * 2, /* blackman harris*/
+		3.5659039231 * 2, /* flat top */
+		1.5029392863 * 2  /* welch */
 	};
 
 	// Mathematial constants
