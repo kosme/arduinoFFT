@@ -392,16 +392,16 @@ private:
 		0.0000239684};
 #endif
 	static constexpr T _WindowCompensationFactors[10] = {
-		2,				  /* rectangle (Box car) */
-		1.8549343278 * 2, /* hamming */
-		1.8554726898 * 2, /* hann */
-		2.0039186079 * 2, /* triangle (Bartlett) */
-		2.8163172034 * 2, /* nuttall */
-		2.367347436 * 2,  /* blackman */
-		2.7557840395 * 2, /* blackman nuttall */
-		2.7929062517 * 2, /* blackman harris*/
-		3.5659039231 * 2, /* flat top */
-		1.5029392863 * 2  /* welch */
+		1.0000000000 * 2.0, // rectangle (Box car)
+		1.8549343278 * 2.0, // hamming
+		1.8554726898 * 2.0, // hann
+		2.0039186079 * 2.0, // triangle (Bartlett)
+		2.8163172034 * 2.0, // nuttall
+		2.3673474360 * 2.0, // blackman
+		2.7557840395 * 2.0, // blackman nuttall
+		2.7929062517 * 2.0, // blackman harris
+		3.5659039231 * 2.0, // flat top
+		1.5029392863 * 2.0  // welch
 	};
 
 	// Mathematial constants
@@ -419,24 +419,27 @@ private:
 	}
 
 #ifdef FFT_SQRT_APPROXIMATION
+	// Fast inverse square root aka "Quake 3 fast inverse square root", multiplied by x.
+	// Uses one iteration of Halley's method for precision.
+	// See: https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Iterative_methods_for_reciprocal_square_roots
+	// And: https://github.com/HorstBaerbel/approx
 	template<typename V = T>
 	static inline V sqrt_internal(typename std::enable_if<std::is_same<V, float>::value, V>::type x)
 	{
-
-		union {
-			int i;
+		union // get bits for float value
+		{
 			float x;
+			int32_t i;
 		} u;
 		u.x = x;
-		u.i = (1 << 29) + (u.i >> 1) - (1 << 22);
-		// Two Babylonian Steps (simplified from:)
-		// u.x = 0.5f * (u.x + x/u.x);
-		// u.x = 0.5f * (u.x + x/u.x);
-		u.x = u.x + x / u.x;
-		u.x = 0.25f * u.x + x / u.x;
+		u.i = 0x5f375a86 - (u.i >> 1); // gives initial guess y0. use 0x5fe6ec85e7de30da for double
+		float xu = x * u.x;
+		float xu2 = xu * u.x;
+		u.x = (0.125 * 3.0) * xu * (5.0 - xu2 * ((10.0 / 3.0) - xu2)); // Halley's method, repeating increases accuracy
 		return u.x;
 	}
 
+	// At least on the ESP32, the approximation is not faster, so we use the standard function
 	template<typename V = T>
 	static inline V sqrt_internal(typename std::enable_if<!std::is_same<V, float>::value, V>::type x)
 	{
