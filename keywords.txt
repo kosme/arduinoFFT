@@ -21,6 +21,7 @@ windowing	KEYWORD2
 exponent	KEYWORD2
 revision	KEYWORD2
 majorPeak	KEYWORD2
+setArrays	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

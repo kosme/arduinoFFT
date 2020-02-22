@@ -106,6 +106,13 @@ public:
 		return 0x19;
 	}
 
+	// Replace the data array pointers
+	void setArrays(T *vReal, T *vImag)
+	{
+		_vReal = vReal;
+		_vImag = vImag;
+	}
+
 	// Computes in-place complex-to-complex FFT
 	void compute(FFTDirection dir) const
 	{
@@ -347,7 +354,7 @@ public:
 		return interpolatedX;
 	}
 
-	void majorPeak(T &f, T &v) const
+	void majorPeak(T &frequency, T &value) const
 	{
 		T maxY = 0;
 		uint_fast16_t IndexOfMaxY = 0;
@@ -372,8 +379,8 @@ public:
 			interpolatedX = ((IndexOfMaxY + delta) * this->_samplingFrequency) / (this->_samples);
 		}
 		// returned value: interpolated frequency peak apex
-		f = interpolatedX;
-		v = abs(this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]);
+		frequency = interpolatedX;
+		value = abs(this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]);
 	}
 
 private:

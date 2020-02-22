@@ -1,8 +1,13 @@
+02/22/20 v1.9.1
+Add setArrays() function because of issue #32.
+Add API migration info to README and improve README.
+Use better sqrtf() approximation.
+
 02/19/20 v1.9.0
 Remove deprecated API. Consistent renaming of functions to lowercase.
 Make template to be able to use float or double type (float brings a ~70% speed increase on ESP32).
 Add option to provide cache for window function weighing factors (~50% speed increase on ESP32).
-Add some #defines to enable math approximisations to further speed up code (~50% speed increase on ESP32).
+Add some #defines to enable math approximisations to further speed up code (~40% speed increase on ESP32).
 
 01/27/20 v1.5.5
 Lookup table for constants c1 and c2 used during FFT comupting. This increases the FFT computing speed in around 5%.
