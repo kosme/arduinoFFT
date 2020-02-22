@@ -4,7 +4,7 @@ arduinoFFT
 # Fast Fourier Transform for Arduino
 
 This is a fork from https://code.google.com/p/makefurt/ which has been abandoned since 2011.
-~~This is a C++ library for Arduino for computing FFT.~~ Now it works both on Arduino and C projects. This is version 2.0 of the library, which has a different [API](#api). See here [how to migrate from 1.x to 2.x](#migrating-from-1.x-to-2.x).
+~~This is a C++ library for Arduino for computing FFT.~~ Now it works both on Arduino and C projects. This is version 2.0 of the library, which has a different [API](#api). See here [how to migrate from 1.x to 2.x](#migrating-from-1x-to-2x).
 Tested on Arduino 1.6.11 and 1.8.10.
 
 ## Installation on Arduino
