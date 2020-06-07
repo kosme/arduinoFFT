@@ -199,13 +199,13 @@ void arduinoFFT::DCRemoval()
 {
 	// calculate the mean of vData
 	double mean = 0;
-	for (uint16_t i = 1; i < ((this->_samples >> 1) + 1); i++)
+	for (uint16_t i = 0; i < this->_samples; i++)
 	{
 		mean += this->_vReal[i];
 	}
 	mean /= this->_samples;
 	// Subtract the mean from vData
-	for (uint16_t i = 1; i < ((this->_samples >> 1) + 1); i++)
+	for (uint16_t i = 0; i < this->_samples; i++)
 	{
 		this->_vReal[i] -= mean;
 	}
@@ -216,13 +216,13 @@ void arduinoFFT::DCRemoval(double *vData, uint16_t samples)
 	// calculate the mean of vData
 	#warning("This method is deprecated and may be removed on future revisions.")
 	double mean = 0;
-	for (uint16_t i = 1; i < ((samples >> 1) + 1); i++)
+	for (uint16_t i = 0; i < samples; i++)
 	{
 		mean += vData[i];
 	}
 	mean /= samples;
 	// Subtract the mean from vData
-	for (uint16_t i = 1; i < ((samples >> 1) + 1); i++)
+	for (uint16_t i = 0; i < samples; i++)
 	{
 		vData[i] -= mean;
 	}
