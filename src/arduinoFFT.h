@@ -58,6 +58,7 @@ enum class FFTDirection
 	Reverse,
 	Forward
 };
+
 enum class FFTWindow
 {
 	Rectangle,		  // rectangle (Box car)
@@ -77,7 +78,7 @@ class ArduinoFFT
 {
 public:
 	// Constructor
-	ArduinoFFT(T *vReal, T *vImag, uint_fast16_t samples, T samplingFrequency, T * windowWeighingFactors = nullptr)
+	ArduinoFFT(T *vReal, T *vImag, uint_fast16_t samples, T samplingFrequency, T *windowWeighingFactors = nullptr)
 		: _vReal(vReal)
 		, _vImag(vImag)
 		, _samples(samples)
@@ -138,7 +139,7 @@ public:
 		}
 		// Compute the FFT
 #ifdef __AVR__
-		small_type index = 0;
+		uint_fast8_t index = 0;
 #endif
 		T c1 = -1.0;
 		T c2 = 0.0;
@@ -166,8 +167,8 @@ public:
 				u1 = z;
 			}
 #ifdef __AVR__
-			c2 = pgm_read_T_near(&(_c2[index]));
-			c1 = pgm_read_T_near(&(_c1[index]));
+			c2 = pgm_read_float_near(&(_c2[index]));
+			c1 = pgm_read_float_near(&(_c1[index]));
 			index++;
 #else
 			T cTemp = 0.5 * c1;
@@ -220,8 +221,8 @@ public:
 	void windowing(FFTWindow windowType, FFTDirection dir, bool withCompensation = false)
 	{
 		// check if values are already pre-computed for the correct window type and compensation
-		if (_windowWeighingFactors && _weighingFactorsComputed && 
-			_weighingFactorsFFTWindow == windowType && 
+		if (_windowWeighingFactors && _weighingFactorsComputed &&
+			_weighingFactorsFFTWindow == windowType &&
 			_weighingFactorsWithCompensation == withCompensation)
 		{
 			// yes. values are precomputed
@@ -373,7 +374,7 @@ public:
 		}
 		T delta = 0.5 * ((this->_vReal[IndexOfMaxY - 1] - this->_vReal[IndexOfMaxY + 1]) / (this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]));
 		T interpolatedX = ((IndexOfMaxY + delta) * this->_samplingFrequency) / (this->_samples - 1);
-		if (IndexOfMaxY == (this->_samples >> 1)) 
+		if (IndexOfMaxY == (this->_samples >> 1))
 		{
 			//To improve calculation on edge values
 			interpolatedX = ((IndexOfMaxY + delta) * this->_samplingFrequency) / (this->_samples);
@@ -385,31 +386,10 @@ public:
 
 private:
 #ifdef __AVR__
-	static const T _c1[] PROGMEM = {
-		0.0000000000, 0.7071067812, 0.9238795325, 0.9807852804,
-		0.9951847267, 0.9987954562, 0.9996988187, 0.9999247018,
-		0.9999811753, 0.9999952938, 0.9999988235, 0.9999997059,
-		0.9999999265, 0.9999999816, 0.9999999954, 0.9999999989,
-		0.9999999997};
-	static const T _c2[] PROGMEM = {
-		1.0000000000, 0.7071067812, 0.3826834324, 0.1950903220,
-		0.0980171403, 0.0490676743, 0.0245412285, 0.0122715383,
-		0.0061358846, 0.0030679568, 0.0015339802, 0.0007669903,
-		0.0003834952, 0.0001917476, 0.0000958738, 0.0000479369,
-		0.0000239684};
+	static const float _c1[] PROGMEM;
+	static const float _c2[] PROGMEM;
 #endif
-	static constexpr T _WindowCompensationFactors[10] = {
-		1.0000000000 * 2.0, // rectangle (Box car)
-		1.8549343278 * 2.0, // hamming
-		1.8554726898 * 2.0, // hann
-		2.0039186079 * 2.0, // triangle (Bartlett)
-		2.8163172034 * 2.0, // nuttall
-		2.3673474360 * 2.0, // blackman
-		2.7557840395 * 2.0, // blackman nuttall
-		2.7929062517 * 2.0, // blackman harris
-		3.5659039231 * 2.0, // flat top
-		1.5029392863 * 2.0  // welch
-	};
+	static const T _WindowCompensationFactors[10];
 
 	// Mathematial constants
 #ifndef TWO_PI
@@ -430,7 +410,7 @@ private:
 	// Uses one iteration of Halley's method for precision.
 	// See: https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Iterative_methods_for_reciprocal_square_roots
 	// And: https://github.com/HorstBaerbel/approx
-	template<typename V = T>
+	template <typename V = T>
 	static inline V sqrt_internal(typename std::enable_if<std::is_same<V, float>::value, V>::type x)
 	{
 		union // get bits for float value
@@ -447,7 +427,7 @@ private:
 	}
 
 	// At least on the ESP32, the approximation is not faster, so we use the standard function
-	template<typename V = T>
+	template <typename V = T>
 	static inline V sqrt_internal(typename std::enable_if<!std::is_same<V, float>::value, V>::type x)
 	{
 		return sqrt(x);
@@ -462,11 +442,43 @@ private:
 	T _samplingFrequency = 0;
 	T *_vReal = nullptr;
 	T *_vImag = nullptr;
-	T * _windowWeighingFactors = nullptr;
+	T *_windowWeighingFactors = nullptr;
 	FFTWindow _weighingFactorsFFTWindow;
 	bool _weighingFactorsWithCompensation = false;
 	bool _weighingFactorsComputed = false;
 	uint_fast8_t _power = 0;
+};
+
+#ifdef __AVR__
+template <typename T>
+const float ArduinoFFT<T>::_c1[] PROGMEM = {
+	0.0000000000, 0.7071067812, 0.9238795325, 0.9807852804,
+	0.9951847267, 0.9987954562, 0.9996988187, 0.9999247018,
+	0.9999811753, 0.9999952938, 0.9999988235, 0.9999997059,
+	0.9999999265, 0.9999999816, 0.9999999954, 0.9999999989,
+	0.9999999997};
+
+template <typename T>
+const float ArduinoFFT<T>::_c2[] PROGMEM = {
+	1.0000000000, 0.7071067812, 0.3826834324, 0.1950903220,
+	0.0980171403, 0.0490676743, 0.0245412285, 0.0122715383,
+	0.0061358846, 0.0030679568, 0.0015339802, 0.0007669903,
+	0.0003834952, 0.0001917476, 0.0000958738, 0.0000479369,
+	0.0000239684};
+#endif
+
+template <typename T>
+const T ArduinoFFT<T>::_WindowCompensationFactors[10] = {
+	1.0000000000 * 2.0, // rectangle (Box car)
+	1.8549343278 * 2.0, // hamming
+	1.8554726898 * 2.0, // hann
+	2.0039186079 * 2.0, // triangle (Bartlett)
+	2.8163172034 * 2.0, // nuttall
+	2.3673474360 * 2.0, // blackman
+	2.7557840395 * 2.0, // blackman nuttall
+	2.7929062517 * 2.0, // blackman harris
+	3.5659039231 * 2.0, // flat top
+	1.5029392863 * 2.0	// welch
 };
 
 #endif
