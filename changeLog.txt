@@ -1,3 +1,6 @@
+02/22/20 v1.9.2
+Fix compilation on AVR systems.
+
 02/22/20 v1.9.1
 Add setArrays() function because of issue #32.
 Add API migration info to README and improve README.
