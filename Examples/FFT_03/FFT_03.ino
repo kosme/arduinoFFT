@@ -47,6 +47,7 @@ void setup()
 {
   sampling_period_us = round(1000000*(1.0/samplingFrequency));
   Serial.begin(115200);
+  while(!Serial);
   Serial.println("Ready");
 }
 
