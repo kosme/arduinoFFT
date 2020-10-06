@@ -248,7 +248,11 @@ void arduinoFFT::Windowing(uint8_t windowType, uint8_t dir)
 			weighingFactor = 0.54 * (1.0 - cos(twoPi * ratio));
 			break;
 		case FFT_WIN_TYP_TRIANGLE: // triangle (Bartlett)
+			#if defined(ESP8266) || defined(ESP32)
+			weighingFactor = 1.0 - ((2.0 * fabs(indexMinusOne - (samplesMinusOne / 2.0))) / samplesMinusOne);
+			#else
 			weighingFactor = 1.0 - ((2.0 * abs(indexMinusOne - (samplesMinusOne / 2.0))) / samplesMinusOne);
+			#endif
 			break;
 		case FFT_WIN_TYP_NUTTALL: // nuttall
 			weighingFactor = 0.355768 - (0.487396 * (cos(twoPi * ratio))) + (0.144232 * (cos(fourPi * ratio))) - (0.012604 * (cos(sixPi * ratio)));
@@ -302,7 +306,11 @@ void arduinoFFT::Windowing(double *vData, uint16_t samples, uint8_t windowType, 
 			weighingFactor = 0.54 * (1.0 - cos(twoPi * ratio));
 			break;
 		case FFT_WIN_TYP_TRIANGLE: // triangle (Bartlett)
+			#if defined(ESP8266) || defined(ESP32)
+			weighingFactor = 1.0 - ((2.0 * fabs(indexMinusOne - (samplesMinusOne / 2.0))) / samplesMinusOne);
+			#else
 			weighingFactor = 1.0 - ((2.0 * abs(indexMinusOne - (samplesMinusOne / 2.0))) / samplesMinusOne);
+			#endif
 			break;
 		case FFT_WIN_TYP_NUTTALL: // nuttall
 			weighingFactor = 0.355768 - (0.487396 * (cos(twoPi * ratio))) + (0.144232 * (cos(fourPi * ratio))) - (0.012604 * (cos(sixPi * ratio)));
@@ -376,7 +384,11 @@ void arduinoFFT::MajorPeak(double *f, double *v)
 		interpolatedX = ((IndexOfMaxY + delta)  * this->_samplingFrequency) / (this->_samples);
 	// returned value: interpolated frequency peak apex
 	*f = interpolatedX;
+	#if defined(ESP8266) || defined(ESP32)
+	*v = fabs(this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]);
+	#else
 	*v = abs(this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]);
+	#endif
 }
 
 double arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequency)
@@ -424,7 +436,11 @@ void arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequenc
 		interpolatedX = ((IndexOfMaxY + delta)  * samplingFrequency) / (samples);
 	// returned value: interpolated frequency peak apex
 	*f = interpolatedX;
+	#if defined(ESP8266) || defined(ESP32)
+	*v = fabs(vD[IndexOfMaxY - 1] - (2.0 * vD[IndexOfMaxY]) + vD[IndexOfMaxY + 1]);
+	#else
 	*v = abs(vD[IndexOfMaxY - 1] - (2.0 * vD[IndexOfMaxY]) + vD[IndexOfMaxY + 1]);
+	#endif
 }
 
 uint8_t arduinoFFT::Exponent(uint16_t value)
