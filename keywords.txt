@@ -3,7 +3,7 @@
 #######################################
 
 #######################################
-# Datatypes (KEYWORD1)
+# Datatypes	(KEYWORD1)
 #######################################
 
 arduinoFFT	KEYWORD1
@@ -19,6 +19,7 @@ Windowing	KEYWORD2
 Exponent	KEYWORD2
 Revision	KEYWORD2
 MajorPeak	KEYWORD2
+MajorPeakParabola	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
