@@ -443,6 +443,53 @@ void arduinoFFT::MajorPeak(double *vD, uint16_t samples, double samplingFrequenc
 	#endif
 }
 
+double arduinoFFT::MajorPeakParabola()
+{
+	double maxY = 0;
+	uint16_t IndexOfMaxY = 0;
+	//If sampling_frequency = 2 * max_frequency in signal,
+	//value would be stored at position samples/2
+	for (uint16_t i = 1; i < ((this->_samples >> 1) + 1); i++)
+	{
+		if ((this->_vReal[i-1] < this->_vReal[i]) && (this->_vReal[i] > this->_vReal[i+1]))
+		{
+			if (this->_vReal[i] > maxY)
+			{
+				maxY = this->_vReal[i];
+				IndexOfMaxY = i;
+			}
+		}
+	}
+
+	double freq = 0;
+	if( IndexOfMaxY>0 )
+	{
+		// Assume the three points to be on a parabola
+		double a,b,c;
+		Parabola(IndexOfMaxY-1, this->_vReal[IndexOfMaxY-1], IndexOfMaxY, this->_vReal[IndexOfMaxY], IndexOfMaxY+1, this->_vReal[IndexOfMaxY+1], &a, &b, &c);
+
+		// Peak is at the middle of the parabola
+		double x = -b/(2*a);
+
+		// And magnitude is at the extrema of the parabola if you want It...
+		// double y = a*x*x+b*x+c;  
+
+		// Convert to frequency
+		freq = (x  * this->_samplingFrequency) / (this->_samples);
+	}
+
+	return freq;
+}
+
+void arduinoFFT::Parabola(double x1, double y1, double x2, double y2, double x3, double y3, double *a, double *b, double *c)
+{
+	double reversed_denom = 1/((x1 - x2) * (x1 - x3) * (x2 - x3));
+
+	*a = (x3 * (y2 - y1) + x2 * (y1 - y3) + x1 * (y3 - y2)) * reversed_denom;
+	*b = (x3*x3 * (y1 - y2) + x2*x2 * (y3 - y1) + x1*x1 * (y2 - y3)) * reversed_denom;
+	*c = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) *reversed_denom;
+}
+
 uint8_t arduinoFFT::Exponent(uint16_t value)
 {
 	#warning("This method may not be accessible on future revisions.")

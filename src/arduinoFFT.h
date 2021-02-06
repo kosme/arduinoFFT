@@ -98,6 +98,8 @@ public:
 	void MajorPeak(double *f, double *v);
 	void Windowing(uint8_t windowType, uint8_t dir);
 
+	double MajorPeakParabola();
+
 private:
 	/* Variables */
 	uint16_t _samples;
@@ -107,6 +109,7 @@ private:
 	uint8_t _power;
 	/* Functions */
 	void Swap(double *x, double *y);
+	void Parabola(double x1, double y1, double x2, double y2, double x3, double y3, double *a, double *b, double *c);
 };
 
 #endif

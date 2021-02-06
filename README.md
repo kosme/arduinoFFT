@@ -61,6 +61,7 @@ Calcuates the Fast Fourier Transform.
 Removes the DC component from the sample data.
 * **MajorPeak**(double *vD, uint16_t samples, double samplingFrequency);
 * **MajorPeak**();
+* **MajorPeakParabola**();
 Looks for and returns the frequency of the biggest spike in the analyzed signal.
 * **Revision**(void);
 Returns the library revision.
