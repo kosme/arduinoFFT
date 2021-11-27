@@ -435,12 +435,12 @@ private:
 #endif
 
 	/* Variables */
-#ifdef FFT_SPEED_OVER_PRECISION
-	T _oneOverSamples = 0.0;
-#endif
 	T *_vReal = nullptr;
 	T *_vImag = nullptr;
 	uint_fast16_t _samples = 0;
+#ifdef FFT_SPEED_OVER_PRECISION
+	T _oneOverSamples = 0.0;
+#endif
 	T _samplingFrequency = 0;
 	T *_windowWeighingFactors = nullptr;
 	FFTWindow _weighingFactorsFFTWindow;
