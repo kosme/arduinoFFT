@@ -1,6 +1,6 @@
 /*
 
-	Example of use of the FFT libray to compute FFT for a signal sampled through the ADC.
+	Example of use of the FFT library to compute FFT for a signal sampled through the ADC.
         Copyright (C) 2018 Enrique Condés and Ragnar Ranøyen Homb
 
 	This program is free software: you can redistribute it and/or modify

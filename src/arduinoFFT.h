@@ -1,6 +1,6 @@
 /*
 
-	FFT libray
+	FFT library
 	Copyright (C) 2010 Didier Longueville
 	Copyright (C) 2014 Enrique Condes
 

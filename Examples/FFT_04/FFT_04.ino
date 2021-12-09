@@ -1,6 +1,6 @@
 /*
 
-	Example of use of the FFT libray
+	Example of use of the FFT library
         Copyright (C) 2018 Enrique Condes
 
 	This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
   of each of the frequencies that compose the signal are calculated. Finally,
   the frequency spectrum magnitudes are printed. If you use the Arduino IDE
   serial plotter, you will see a single spike corresponding to the 1000 Hz
-  frecuency.
+  frequency.
 */
 
 #include "arduinoFFT.h"
