@@ -1,6 +1,6 @@
 /*
 
-	Example of use of the FFT libray
+	Example of use of the FFT library
         Copyright (C) 2014 Enrique Condes
 
 	This program is free software: you can redistribute it and/or modify

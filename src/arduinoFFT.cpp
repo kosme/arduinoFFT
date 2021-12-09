@@ -1,6 +1,6 @@
 /*
 
-	FFT libray
+	FFT library
 	Copyright (C) 2010 Didier Longueville
 	Copyright (C) 2014 Enrique Condes
 
@@ -230,7 +230,7 @@ void arduinoFFT::DCRemoval(double *vData, uint16_t samples)
 
 void arduinoFFT::Windowing(uint8_t windowType, uint8_t dir)
 {// Weighing factors are computed once before multiple use of FFT
-// The weighing function is symetric; half the weighs are recorded
+// The weighing function is symmetric; half the weighs are recorded
 	double samplesMinusOne = (double(this->_samples) - 1.0);
 	for (uint16_t i = 0; i < (this->_samples >> 1); i++) {
 		double indexMinusOne = double(i);
