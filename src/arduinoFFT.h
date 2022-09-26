@@ -1,6 +1,6 @@
 /*
 
-	FFT libray
+	FFT library
 	Copyright (C) 2010 Didier Longueville
 	Copyright (C) 2014 Enrique Condes
 	Copyright (C) 2020 Bim Overbohm (header-only, template, speed improvements)
@@ -419,18 +419,32 @@ private:
 			int32_t i;
 		} u;
 		u.x = x;
-		u.i = 0x5f375a86 - (u.i >> 1); // gives initial guess y0. use 0x5fe6ec85e7de30da for double
+		u.i = 0x5f375a86 - (u.i >> 1); // gives initial guess y0.
 		float xu = x * u.x;
 		float xu2 = xu * u.x;
 		u.x = (0.125 * 3.0) * xu * (5.0 - xu2 * ((10.0 / 3.0) - xu2)); // Halley's method, repeating increases accuracy
 		return u.x;
 	}
 
-	// At least on the ESP32, the approximation is not faster, so we use the standard function
 	template <typename V = T>
-	static inline V sqrt_internal(typename std::enable_if<!std::is_same<V, float>::value, V>::type x)
+	static inline V sqrt_internal(typename std::enable_if<std::is_same<V, double>::value, V>::type x)
 	{
+		// According to HosrtBaerbel, on the ESP32 the approximation is not faster, so we use the standard function
+	#ifdef ESP32
 		return sqrt(x);
+	#else
+		union // get bits for float value
+		{
+			float x;
+			int32_t i;
+		} u;
+		u.x = x;
+		u.i = 0x5fe6ec85e7de30da - (u.i >> 1); // gives initial guess y0.
+		float xu = x * u.x;
+		float xu2 = xu * u.x;
+		u.x = (0.125 * 3.0) * xu * (5.0 - xu2 * ((10.0 / 3.0) - xu2)); // Halley's method, repeating increases accuracy
+		return u.x;
+	#endif
 	}
 #endif
 
