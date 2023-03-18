@@ -19,12 +19,14 @@ To install this library, just place this entire folder as a subfolder in your Ar
 
 When installed, this library should look like:
 
+```
 Arduino\libraries\arduinoFTT              			(this library's folder)
 Arduino\libraries\arduinoFTT\arduinoFTT.cpp 			(the library implementation file, uses 32 bits floats vectors)
 Arduino\libraries\arduinoFTT\arduinoFTT.h   			(the library header file, uses 32 bits floats vectors)
 Arduino\libraries\arduinoFTT\keywords.txt 			(the syntax coloring file)
 Arduino\libraries\arduinoFTT\examples     			(the examples in the "open" menu)
 Arduino\libraries\arduinoFTT\readme.md   			(this file)
+```
 
 ### Building on Arduino
 
@@ -44,28 +46,31 @@ select arduinoFTT.  This will add a corresponding line to the top of your sketch
 <del>* Spectrum table? </del>
 
 ### API
+The exclamation mark `!` denotes that this method is deprecated and may be removed on future revisions.
 
-* **arduinoFFT**(void);
+* **!arduinoFFT**(void);
 * **arduinoFFT**(double *vReal, double *vImag, uint16_t samples, double samplingFrequency);
 Constructor
 * **~arduinoFFT**(void);
 Destructor
-* **ComplexToMagnitude**(double *vReal, double *vImag, uint16_t samples);
+* **!ComplexToMagnitude**(double *vReal, double *vImag, uint16_t samples);
 * **ComplexToMagnitude**();
-* **Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t dir);
-* **Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir);
+* **!Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t dir);
+* **!Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir);
 * **Compute**(uint8_t dir);
 Calcuates the Fast Fourier Transform.
-* **DCRemoval**(double *vData, uint16_t samples);
+* **!DCRemoval**(double *vData, uint16_t samples);
 * **DCRemoval**();
 Removes the DC component from the sample data.
-* **MajorPeak**(double *vD, uint16_t samples, double samplingFrequency);
+* **!MajorPeak**(double *vD, uint16_t samples, double samplingFrequency);
+* **!MajorPeak**(double *vD, uint16_t samples, double samplingFrequency, double *f, double *v);
 * **MajorPeak**();
+* **MajorPeak**(double *f, double *v);
 * **MajorPeakParabola**();
 Looks for and returns the frequency of the biggest spike in the analyzed signal.
 * **Revision**(void);
 Returns the library revision.
-* **Windowing**(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir);
+* **!Windowing**(double *vData, uint16_t samples, uint8_t windowType, uint8_t dir);
 * **Windowing**(uint8_t windowType, uint8_t dir);
 Performs a windowing function on the values array. The possible windowing options are:
     * FFT_WIN_TYP_RECTANGLE
@@ -78,5 +83,5 @@ Performs a windowing function on the values array. The possible windowing option
     * FFT_WIN_TYP_BLACKMAN_HARRIS
     * FFT_WIN_TYP_FLT_TOP
     * FFT_WIN_TYP_WELCH
-* **Exponent**(uint16_t value);
+* **!Exponent**(uint16_t value);
 Calculates and returns the base 2 logarithm of the given value.
