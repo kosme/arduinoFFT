@@ -23,7 +23,7 @@
 
 #include "arduinoFFT.h"
 
-arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
+arduinoFFT FFT;
 /*
 These values can be changed in order to evaluate the functions
 */
@@ -31,7 +31,6 @@ These values can be changed in order to evaluate the functions
 const uint16_t samples = 64;
 const double sampling = 40;
 const uint8_t amplitude = 4;
-uint8_t exponent;
 const double startFrequency = 2;
 const double stopFrequency = 16.4;
 const double step_size = 0.1;
@@ -55,7 +54,6 @@ void setup()
   Serial.begin(115200);
   while(!Serial);
   Serial.println("Ready");
-  exponent = FFT.Exponent(samples);
 }
 
 void loop()
@@ -74,18 +72,19 @@ void loop()
     /*Serial.println("Data:");
     PrintVector(vReal, samples, SCL_TIME);*/
     time=millis();
-    FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
+    FFT = arduinoFFT(vReal, vImag, samples, sampling); /* Create FFT object */
+    FFT.Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
     /*Serial.println("Weighed data:");
     PrintVector(vReal, samples, SCL_TIME);*/
-    FFT.Compute(vReal, vImag, samples, exponent, FFT_FORWARD); /* Compute FFT */
+    FFT.Compute(FFT_FORWARD); /* Compute FFT */
     /*Serial.println("Computed Real values:");
     PrintVector(vReal, samples, SCL_INDEX);
     Serial.println("Computed Imaginary values:");
     PrintVector(vImag, samples, SCL_INDEX);*/
-    FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
+    FFT.ComplexToMagnitude(); /* Compute magnitudes */
     /*Serial.println("Computed magnitudes:");
     PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);*/
-    double x = FFT.MajorPeak(vReal, samples, sampling);
+    double x = FFT.MajorPeak();
     Serial.print(frequency);
     Serial.print(": \t\t");
     Serial.print(x, 4);
