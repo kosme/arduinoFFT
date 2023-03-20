@@ -20,7 +20,7 @@
 
 #include "arduinoFFT.h"
 
-arduinoFFT FFT = arduinoFFT(); /* Create FFT object */
+arduinoFFT FFT;
 /*
 These values can be changed in order to evaluate the functions
 */
@@ -64,21 +64,22 @@ void loop()
       }
       microseconds += sampling_period_us;
   }
+  FFT = arduinoFFT(vReal, vImag, samples, samplingFrequency); /* Create FFT object */
   /* Print the results of the sampling according to time */
   Serial.println("Data:");
   PrintVector(vReal, samples, SCL_TIME);
-  FFT.Windowing(vReal, samples, FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
+  FFT.Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
   Serial.println("Weighed data:");
   PrintVector(vReal, samples, SCL_TIME);
-  FFT.Compute(vReal, vImag, samples, FFT_FORWARD); /* Compute FFT */
+  FFT.Compute(FFT_FORWARD); /* Compute FFT */
   Serial.println("Computed Real values:");
   PrintVector(vReal, samples, SCL_INDEX);
   Serial.println("Computed Imaginary values:");
   PrintVector(vImag, samples, SCL_INDEX);
-  FFT.ComplexToMagnitude(vReal, vImag, samples); /* Compute magnitudes */
+  FFT.ComplexToMagnitude(); /* Compute magnitudes */
   Serial.println("Computed magnitudes:");
   PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);
-  double x = FFT.MajorPeak(vReal, samples, samplingFrequency);
+  double x = FFT.MajorPeak();
   Serial.println(x, 6); //Print out what frequency is the most dominant.
   while(1); /* Run Once */
   // delay(2000); /* Repeat after delay */
