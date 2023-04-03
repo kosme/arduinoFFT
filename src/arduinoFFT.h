@@ -50,7 +50,9 @@
 #ifdef FFT_SQRT_APPROXIMATION
 	#include <type_traits>
 #else
-	#define sqrt_internal sqrt
+	#ifndef sqrt_internal
+		#define sqrt_internal sqrt
+	#endif
 #endif
 
 enum class FFTDirection
