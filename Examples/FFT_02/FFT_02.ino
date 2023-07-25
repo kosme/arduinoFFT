@@ -3,7 +3,7 @@
 	Example of use of the FFT library to compute FFT for several signals over a range of frequencies.
         The exponent is calculated once before the execution since it is a constant.
         This saves resources during the execution of the sketch and reduces the compiled size.
-        The sketch shows the time that the computing is taking.
+        The sketch shows the time that the computation takes.
         Copyright (C) 2014 Enrique Condes
 
 	This program is free software: you can redistribute it and/or modify

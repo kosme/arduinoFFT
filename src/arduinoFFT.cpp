@@ -103,9 +103,10 @@ void arduinoFFT::Compute(FFTDirection dir) {
   }
   // Scaling for reverse transform /
   if (dir != FFT_FORWARD) {
+    double reciprocal = 1.0 / this->_samples;
     for (uint16_t i = 0; i < this->_samples; i++) {
-      this->_vReal[i] /= this->_samples;
-      this->_vImag[i] /= this->_samples;
+      this->_vReal[i] *= reciprocal;
+      this->_vImag[i] *= reciprocal;
     }
   }
 }
@@ -169,9 +170,10 @@ void arduinoFFT::Compute(double *vReal, double *vImag, uint16_t samples,
   }
   // Scaling for reverse transform
   if (dir != FFT_FORWARD) {
+    double reciprocal = 1.0 / samples;
     for (uint16_t i = 0; i < samples; i++) {
-      vReal[i] /= samples;
-      vImag[i] /= samples;
+      vReal[i] *= reciprocal;
+      vImag[i] *= reciprocal;
     }
   }
 }
@@ -535,7 +537,7 @@ uint8_t arduinoFFT::Exponent(uint16_t value) {
 #warning("This method may not be accessible on future revisions.")
   // Calculates the base 2 logarithm of a value
   uint8_t result = 0;
-  while (((value >> result) & 1) != 1)
+  while (value >>= 1)
     result++;
   return (result);
 }
