@@ -58,7 +58,7 @@ Destructor
 * **!Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t dir);
 * **!Compute**(double *vReal, double *vImag, uint16_t samples, uint8_t power, uint8_t dir);
 * **Compute**(uint8_t dir);
-Calcuates the Fast Fourier Transform.
+Calculates the Fast Fourier Transform.
 * **!DCRemoval**(double *vData, uint16_t samples);
 * **DCRemoval**();
 Removes the DC component from the sample data.

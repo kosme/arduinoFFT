@@ -20,7 +20,7 @@
       "email": "contact@arduinoos.com"
     }
   ],
-  "version": "1.6.1",
+  "version": "1.6.2",
   "frameworks": ["arduino","mbed","espidf"],
   "platforms": "*",
   "headers": "arduinoFFT.h"

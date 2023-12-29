@@ -292,7 +292,7 @@ void arduinoFFT::Windowing(FFTWindow windowType, FFTDirection dir) {
 void arduinoFFT::Windowing(double *vData, uint16_t samples,
                            FFTWindow windowType, FFTDirection dir) {
 // Weighing factors are computed once before multiple use of FFT
-// The weighing function is symetric; half the weighs are recorded
+// The weighing function is symmetric; half the weighs are recorded
 #warning("This method is deprecated and may be removed on future revisions.")
   double samplesMinusOne = (double(samples) - 1.0);
   for (uint16_t i = 0; i < (samples >> 1); i++) {
