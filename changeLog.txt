@@ -1,3 +1,9 @@
+28/12/23 v1.6.2
+Fix issue 52 and symplify calculation of synthetic data for examples 1, 2, 4, and 5.
+
+25/07/23 v1.6.1
+Code optimization for speed improvements. See issue 84 for more details.
+
 03/09/23 v1.6
 Include some functionality from development branch.
 
