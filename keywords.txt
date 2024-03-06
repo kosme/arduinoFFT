@@ -17,11 +17,11 @@ FFTWindow	KEYWORD1
 complexToMagnitude	KEYWORD2
 compute	KEYWORD2
 dcRemoval	KEYWORD2
-windowing	KEYWORD2
-exponent	KEYWORD2
-revision	KEYWORD2
 majorPeak	KEYWORD2
+majorPeakParabola	KEYWORD2
+revision	KEYWORD2
 setArrays	KEYWORD2
+windowing	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
@@ -29,13 +29,14 @@ setArrays	KEYWORD2
 
 Forward	LITERAL1
 Reverse	LITERAL1
-Rectangle	LITERAL1
+
+Blackman	LITERAL1
+Blackman_Harris	LITERAL1
+Blackman_Nuttall	LITERAL1
+Flat_top	LITERAL1
 Hamming	LITERAL1
 Hann	LITERAL1
-Triangle	LITERAL1
 Nuttall	LITERAL1
-Blackman	LITERAL1
-Blackman_Nuttall	LITERAL1
-Blackman_Harris	LITERAL1
-Flat_top	LITERAL1
+Rectangle	LITERAL1
+Triangle	LITERAL1
 Welch	LITERAL1

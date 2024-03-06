@@ -3,7 +3,7 @@
 	Example of use of the FFT libray to compute FFT for a signal sampled through the ADC.
   
   Copyright (C) 2018 Enrique Condés and Ragnar Ranøyen Homb
-  Copyright (C) 2020 Bim Overbohm (header-only, template, speed improvements)
+  Copyright (C) 2020 Bim Overbohm (template, speed improvements)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by

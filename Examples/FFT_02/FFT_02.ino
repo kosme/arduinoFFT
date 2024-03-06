@@ -1,12 +1,12 @@
 /*
 
 	Example of use of the FFT libray to compute FFT for several signals over a range of frequencies.
-        The exponent is calculated once before the excecution since it is a constant.
-        This saves resources during the excecution of the sketch and reduces the compiled size.
-        The sketch shows the time that the computing is taking.
+  The exponent is calculated once before the excecution since it is a constant.
+  This saves resources during the excecution of the sketch and reduces the compiled size.
+  The sketch shows the time that the computing is taking.
         
   Copyright (C) 2014 Enrique Condes
-  Copyright (C) 2020 Bim Overbohm (header-only, template, speed improvements)
+  Copyright (C) 2020 Bim Overbohm (template, speed improvements)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -65,10 +65,10 @@ void loop()
   for(double frequency = startFrequency; frequency<=stopFrequency; frequency+=step_size)
   {
     /* Build raw data */
-    double cycles = (((samples-1) * frequency) / sampling);
+    double ratio = twoPi * frequency / sampling; // Fraction of a complete cycle stored at each sample (in radians)
     for (uint16_t i = 0; i < samples; i++)
     {
-      vReal[i] = int8_t((amplitude * (sin((i * (TWO_PI * cycles)) / samples))) / 2.0);
+      vReal[i] = int8_t(amplitude * sin(i * ratio) / 2.0);/* Build data with positive and negative values*/
       vImag[i] = 0; //Reset the imaginary values vector for each new frequency
     }
     /*Serial.println("Data:");

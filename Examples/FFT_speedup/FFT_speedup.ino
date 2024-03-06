@@ -1,9 +1,9 @@
 /*
 
 	Example of use of the FFT libray to compute FFT for a signal sampled through the ADC
-    with speedup through different arduinoFFT options. Based on examples/FFT_03/FFT_03.ino
+  with speedup through different arduinoFFT options. Based on examples/FFT_03/FFT_03.ino
   
-    Copyright (C) 2020 Bim Overbohm (header-only, template, speed improvements)
+  Copyright (C) 2020 Bim Overbohm (template, speed improvements)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -47,14 +47,8 @@ Input vectors receive computed results from FFT
 float vReal[samples];
 float vImag[samples];
 
-/*
-Allocate space for FFT window weighing factors, so they are calculated only the first time windowing() is called.
-If you don't do this, a lot of calculations are necessary, depending on the window function.
-*/
-float weighingFactors[samples];
-
 /* Create FFT object with weighing factor storage */
-ArduinoFFT<float> FFT = ArduinoFFT<float>(vReal, vImag, samples, samplingFrequency, weighingFactors);
+ArduinoFFT<float> FFT = ArduinoFFT<float>(vReal, vImag, samples, samplingFrequency, true);
 
 #define SCL_INDEX 0x00
 #define SCL_TIME 0x01
