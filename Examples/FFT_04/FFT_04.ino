@@ -28,7 +28,7 @@
   of each of the frequencies that compose the signal are calculated. Finally,
   the frequency spectrum magnitudes are printed. If you use the Arduino IDE
   serial plotter, you will see a single spike corresponding to the 1000 Hz
-  frecuency.
+  frequency.
 */
 
 #include "arduinoFFT.h"
@@ -58,6 +58,8 @@ ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, samplingFrequ
 void setup()
 {
   Serial.begin(115200);
+  while(!Serial);
+  Serial.println("Ready");
 }
 
 void loop()

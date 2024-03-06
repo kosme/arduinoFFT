@@ -58,6 +58,7 @@ ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, samplingFrequ
 void setup()
 {
   Serial.begin(115200);
+  while(!Serial);
   Serial.println("Ready");
 }
 

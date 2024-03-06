@@ -59,6 +59,7 @@ ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, samplingFrequ
 void setup()
 {
   Serial.begin(115200);
+  while(!Serial);
   Serial.println("Ready");
 }
 
@@ -88,7 +89,7 @@ void loop()
   PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);
   double x;
   double v;
-  FFT.majorPeak(x, v);
+  FFT.majorPeak(&x, &v);
   Serial.print(x, 6);
   Serial.print(", ");
   Serial.println(v, 6);

@@ -27,5 +27,6 @@
   ],
   "version": "2.0",
   "frameworks": ["arduino","mbed","espidf"],
-  "platforms": "*"
+  "platforms": "*",
+  "headers": "arduinoFFT.h"
 }
