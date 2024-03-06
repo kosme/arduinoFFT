@@ -1,7 +1,9 @@
 /*
 
-	Example of use of the FFT library
-        Copyright (C) 2018 Enrique Condes
+	Example of use of the FFT libray
+  
+  Copyright (C) 2018 Enrique Condes
+  Copyright (C) 2020 Bim Overbohm (template, speed improvements)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -31,7 +33,6 @@
 
 #include "arduinoFFT.h"
 
-arduinoFFT FFT;
 /*
 These values can be changed in order to evaluate the functions
 */
@@ -39,12 +40,15 @@ const uint16_t samples = 64; //This value MUST ALWAYS be a power of 2
 const double signalFrequency = 1000;
 const double samplingFrequency = 5000;
 const uint8_t amplitude = 100;
+
 /*
 These are the input and output vectors
 Input vectors receive computed results from FFT
 */
 double vReal[samples];
 double vImag[samples];
+
+ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, samplingFrequency);
 
 #define SCL_INDEX 0x00
 #define SCL_TIME 0x01
@@ -68,12 +72,11 @@ void loop()
     //vReal[i] = uint8_t((amplitude * (sin(i * ratio) + 1.0)) / 2.0);/* Build data displaced on the Y axis to include only positive values*/
     vImag[i] = 0.0; //Imaginary part must be zeroed in case of looping to avoid wrong calculations and overflows
   }
-  FFT = arduinoFFT(vReal, vImag, samples, samplingFrequency); /* Create FFT object */
-  FFT.Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
-  FFT.Compute(FFT_FORWARD); /* Compute FFT */
-  FFT.ComplexToMagnitude(); /* Compute magnitudes */
+  FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward);	/* Weigh data */
+  FFT.compute(FFTDirection::Forward); /* Compute FFT */
+  FFT.complexToMagnitude(); /* Compute magnitudes */
   PrintVector(vReal, samples>>1, SCL_PLOT);
-  double x = FFT.MajorPeak();
+  double x = FFT.majorPeak();
   while(1); /* Run Once */
   // delay(2000); /* Repeat after delay */
 }

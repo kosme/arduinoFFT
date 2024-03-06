@@ -6,36 +6,37 @@
 # Datatypes	(KEYWORD1)
 #######################################
 
-arduinoFFT	KEYWORD1
+ArduinoFFT	KEYWORD1
+FFTDirection	KEYWORD1
+FFTWindow	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-ComplexToMagnitude	KEYWORD2
-Compute	KEYWORD2
-DCRemoval	KEYWORD2
-Windowing	KEYWORD2
-Exponent	KEYWORD2
-Revision	KEYWORD2
-MajorPeak	KEYWORD2
-MajorPeakParabola	KEYWORD2
+complexToMagnitude	KEYWORD2
+compute	KEYWORD2
+dcRemoval	KEYWORD2
+majorPeak	KEYWORD2
+majorPeakParabola	KEYWORD2
+revision	KEYWORD2
+setArrays	KEYWORD2
+windowing	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-twoPi	LITERAL1
-fourPi	LITERAL1
-FFT_FORWARD	LITERAL1
-FFT_REVERSE	LITERAL1
-FFT_WIN_TYP_RECTANGLE	LITERAL1
-FFT_WIN_TYP_HAMMING	LITERAL1
-FFT_WIN_TYP_HANN	LITERAL1
-FFT_WIN_TYP_TRIANGLE	LITERAL1
-FFT_WIN_TYP_NUTTALL	LITERAL1
-FFT_WIN_TYP_BLACKMAN	LITERAL1
-FFT_WIN_TYP_BLACKMAN_NUTTALL	LITERAL1
-FFT_WIN_TYP_BLACKMAN_HARRIS	LITERAL1
-FFT_WIN_TYP_FLT_TOP	LITERAL1
-FFT_WIN_TYP_WELCH	LITERAL1
+Forward	LITERAL1
+Reverse	LITERAL1
+
+Blackman	LITERAL1
+Blackman_Harris	LITERAL1
+Blackman_Nuttall	LITERAL1
+Flat_top	LITERAL1
+Hamming	LITERAL1
+Hann	LITERAL1
+Nuttall	LITERAL1
+Rectangle	LITERAL1
+Triangle	LITERAL1
+Welch	LITERAL1

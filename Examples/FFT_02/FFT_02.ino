@@ -1,10 +1,12 @@
 /*
 
-	Example of use of the FFT library to compute FFT for several signals over a range of frequencies.
-        The exponent is calculated once before the execution since it is a constant.
-        This saves resources during the execution of the sketch and reduces the compiled size.
-        The sketch shows the time that the computation takes.
-        Copyright (C) 2014 Enrique Condes
+	Example of use of the FFT libray to compute FFT for several signals over a range of frequencies.
+  The exponent is calculated once before the excecution since it is a constant.
+  This saves resources during the excecution of the sketch and reduces the compiled size.
+  The sketch shows the time that the computing is taking.
+        
+  Copyright (C) 2014 Enrique Condes
+  Copyright (C) 2020 Bim Overbohm (template, speed improvements)
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,11 +25,9 @@
 
 #include "arduinoFFT.h"
 
-arduinoFFT FFT;
 /*
 These values can be changed in order to evaluate the functions
 */
-
 const uint16_t samples = 64;
 const double sampling = 40;
 const uint8_t amplitude = 4;
@@ -42,7 +42,10 @@ Input vectors receive computed results from FFT
 double vReal[samples];
 double vImag[samples];
 
-unsigned long time;
+/* Create FFT object */
+ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, samples, sampling);
+
+unsigned long startTime;
 
 #define SCL_INDEX 0x00
 #define SCL_TIME 0x01
@@ -71,25 +74,24 @@ void loop()
     }
     /*Serial.println("Data:");
     PrintVector(vReal, samples, SCL_TIME);*/
-    time=millis();
-    FFT = arduinoFFT(vReal, vImag, samples, sampling); /* Create FFT object */
-    FFT.Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);	/* Weigh data */
+    startTime=millis();
+    FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward);	/* Weigh data */
     /*Serial.println("Weighed data:");
     PrintVector(vReal, samples, SCL_TIME);*/
-    FFT.Compute(FFT_FORWARD); /* Compute FFT */
+    FFT.compute(FFTDirection::Forward); /* Compute FFT */
     /*Serial.println("Computed Real values:");
     PrintVector(vReal, samples, SCL_INDEX);
     Serial.println("Computed Imaginary values:");
     PrintVector(vImag, samples, SCL_INDEX);*/
-    FFT.ComplexToMagnitude(); /* Compute magnitudes */
+    FFT.complexToMagnitude(); /* Compute magnitudes */
     /*Serial.println("Computed magnitudes:");
     PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);*/
-    double x = FFT.MajorPeak();
+    double x = FFT.majorPeak();
     Serial.print(frequency);
     Serial.print(": \t\t");
     Serial.print(x, 4);
     Serial.print("\t\t");
-    Serial.print(millis()-time);
+    Serial.print(millis()-startTime);
     Serial.println(" ms");
     // delay(2000); /* Repeat after delay */
   }
