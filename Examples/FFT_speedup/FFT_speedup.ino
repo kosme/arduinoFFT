@@ -1,6 +1,6 @@
 /*
 
-	Example of use of the FFT libray to compute FFT for a signal sampled through the ADC
+	Example of use of the FFT library to compute FFT for a signal sampled through the ADC
   with speedup through different arduinoFFT options. Based on examples/FFT_03/FFT_03.ino
   
   Copyright (C) 2020 Bim Overbohm (template, speed improvements)

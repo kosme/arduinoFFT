@@ -1,6 +1,6 @@
 /*
 
-	Example of use of the FFT libray
+	Example of use of the FFT library
   
   Copyright (C) 2018 Enrique Condes
   Copyright (C) 2020 Bim Overbohm (template, speed improvements)

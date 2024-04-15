@@ -47,7 +47,9 @@
 // This might only work for specific use cases, but is significantly faster.
 
 #ifndef FFT_SQRT_APPROXIMATION
-#define sqrt_internal sqrt
+  #ifndef sqrt_internal
+    #define sqrt_internal sqrt
+  #endif
 #endif
 
 enum class FFTDirection { Forward, Reverse };
