@@ -40,7 +40,7 @@ ArduinoFFT<T>::ArduinoFFT(T *vReal, T *vImag, uint_fast16_t samples,
 template <typename T> ArduinoFFT<T>::~ArduinoFFT(void) {
   // Destructor
   if (_precompiledWindowingFactors) {
-    delete [] _precompiledWindowingFactors;
+    delete[] _precompiledWindowingFactors;
   }
 }
 
@@ -142,6 +142,10 @@ void ArduinoFFT<T>::compute(T *vReal, T *vImag, uint_fast16_t samples,
 #endif
     }
   }
+  // The computation result at position 0 should be as close to 0 as possible.
+  // The DC offset on the signal produces a spike on position 0 that should be
+  // eliminated to avoid issues.
+  vReal[0] = 0;
 }
 
 template <typename T> void ArduinoFFT<T>::dcRemoval(void) const {
@@ -247,7 +251,7 @@ void ArduinoFFT<T>::majorPeakParabola(T *vData, uint_fast16_t samples,
 
     // And magnitude is at the extrema of the parabola if you want It...
     if (magnitude != nullptr) {
-      *magnitude = a * x * x + b * x + c;
+      *magnitude = (a * x * x) + (b * x) + c;
     }
 
     // Convert to frequency
@@ -270,7 +274,7 @@ void ArduinoFFT<T>::setArrays(T *vReal, T *vImag, uint_fast16_t samples) {
     _oneOverSamples = 1.0 / samples;
 #endif
     if (_precompiledWindowingFactors) {
-      delete [] _precompiledWindowingFactors;
+      delete[] _precompiledWindowingFactors;
     }
     _precompiledWindowingFactors = new T[samples / 2];
   }
@@ -501,7 +505,7 @@ template <typename T> double ArduinoFFT<T>::sqrt_internal(double x) const {
 #endif
 
 template <typename T>
-const T ArduinoFFT<T>::_WindowCompensationFactors[10] = {
+const T ArduinoFFT<T>::_WindowCompensationFactors[11] = {
     1.0000000000 * 2.0, // rectangle (Box car)
     1.8549343278 * 2.0, // hamming
     1.8554726898 * 2.0, // hann
@@ -511,7 +515,10 @@ const T ArduinoFFT<T>::_WindowCompensationFactors[10] = {
     2.7557840395 * 2.0, // blackman nuttall
     2.7929062517 * 2.0, // blackman harris
     3.5659039231 * 2.0, // flat top
-    1.5029392863 * 2.0  // welch
+    1.5029392863 * 2.0, // welch
+    // This is added as a precaution, since this index should never be
+    // accessed under normal conditions
+    1.0 // Custom, precompiled value.
 };
 
 template class ArduinoFFT<double>;
