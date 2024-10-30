@@ -142,10 +142,6 @@ void ArduinoFFT<T>::compute(T *vReal, T *vImag, uint_fast16_t samples,
 #endif
     }
   }
-  // The computation result at position 0 should be as close to 0 as possible.
-  // The DC offset on the signal produces a spike on position 0 that should be
-  // eliminated to avoid issues.
-  vReal[0] = 0;
 }
 
 template <typename T> void ArduinoFFT<T>::dcRemoval(void) const {
@@ -427,7 +423,9 @@ template <typename T>
 void ArduinoFFT<T>::findMaxY(T *vData, uint_fast16_t length, T *maxY,
                              uint_fast16_t *index) const {
   *maxY = 0;
-  *index = 0;
+  // A signal with a DC offset produces a spike on bin 0 that should be ignored.
+  // Start the search on bin 1.
+  *index = 1;
   // If sampling_frequency = 2 * max_frequency in signal,
   // value would be stored at position samples/2
   for (uint_fast16_t i = 1; i < length; i++) {
