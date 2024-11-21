@@ -344,7 +344,7 @@ void ArduinoFFT<T>::windowing(T *vData, uint_fast16_t samples,
         weighingFactor = 0.54 - (0.46 * cos(twoPi * ratio));
         break;
       case FFTWindow::Hann: // hann
-        weighingFactor = 0.54 * (1.0 - cos(twoPi * ratio));
+        weighingFactor = 0.50 * (1.0 - cos(twoPi * ratio));
         break;
       case FFTWindow::Triangle: // triangle (Bartlett)
 #if defined(ESP8266) || defined(ESP32)
