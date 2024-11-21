@@ -1,4 +1,4 @@
-arduinoFFT
+arduinoFFT [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14195818.svg)](https://doi.org/10.5281/zenodo.14195818)
 ==========
 
 # Fast Fourier Transform for Arduino
