@@ -52,7 +52,7 @@ template <typename T>
 void ArduinoFFT<T>::complexToMagnitude(T *vReal, T *vImag,
                                        uint_fast16_t samples) const {
   // vM is half the size of vReal and vImag
-  for (uint_fast16_t i = 0; i < samples; i++) {
+  for (uint_fast16_t i = 0; i < (samples >> 1) + 1; i++) {
     vReal[i] = sqrt_internal(sq(vReal[i]) + sq(vImag[i]));
   }
 }
@@ -82,6 +82,9 @@ void ArduinoFFT<T>::compute(T *vReal, T *vImag, uint_fast16_t samples,
   for (uint_fast16_t i = 0; i < (samples - 1); i++) {
     if (i < j) {
       swap(&vReal[i], &vReal[j]);
+      #ifdef COMPLEX_INPUT
+      swap(&vImag[i], &vImag[j]);
+      #endif
       if (dir == FFTDirection::Reverse)
         swap(&vImag[i], &vImag[j]);
     }
@@ -189,11 +192,12 @@ void ArduinoFFT<T>::majorPeak(T *vData, uint_fast16_t samples,
   T delta = 0.5 * ((vData[IndexOfMaxY - 1] - vData[IndexOfMaxY + 1]) /
                    (vData[IndexOfMaxY - 1] - (2.0 * vData[IndexOfMaxY]) +
                     vData[IndexOfMaxY + 1]));
-  T interpolatedX = ((IndexOfMaxY + delta) * samplingFrequency) / (samples - 1);
-  if (IndexOfMaxY == (samples >> 1)) // To improve calculation on edge values
-    interpolatedX = ((IndexOfMaxY + delta) * samplingFrequency) / (samples);
+  if (IndexOfMaxY == (samples >> 1)) { // To improve calculation on edge values
+    *frequency = ((IndexOfMaxY + delta) * samplingFrequency) / (samples);
+  } else {
+    *frequency = ((IndexOfMaxY + delta) * samplingFrequency) / (samples - 1);
+  }
   // returned value: interpolated frequency peak apex
-  *frequency = interpolatedX;
   if (magnitude != nullptr) {
 #if defined(ESP8266) || defined(ESP32)
     *magnitude = fabs(vData[IndexOfMaxY - 1] - (2.0 * vData[IndexOfMaxY]) +
@@ -504,16 +508,16 @@ template <typename T> double ArduinoFFT<T>::sqrt_internal(double x) const {
 
 template <typename T>
 const T ArduinoFFT<T>::_WindowCompensationFactors[11] = {
-    1.0000000000 * 2.0, // rectangle (Box car)
-    1.8549343278 * 2.0, // hamming
-    1.8554726898 * 2.0, // hann
-    2.0039186079 * 2.0, // triangle (Bartlett)
-    2.8163172034 * 2.0, // nuttall
-    2.3673474360 * 2.0, // blackman
-    2.7557840395 * 2.0, // blackman nuttall
-    2.7929062517 * 2.0, // blackman harris
-    3.5659039231 * 2.0, // flat top
-    1.5029392863 * 2.0, // welch
+    2.0,          // 1.0000000000 * 2.0, // rectangle (Box car)
+    3.7098686556, // 1.8549343278 * 2.0, // hamming
+    3.7109453796, // 1.8554726898 * 2.0, // hann
+    4.0078372158, // 2.0039186079 * 2.0, // triangle (Bartlett)
+    5.6326344068, // 2.8163172034 * 2.0, // nuttall
+    4.734694872,  // 2.3673474360 * 2.0, // blackman
+    5.511568079,  // 2.7557840395 * 2.0, // blackman nuttall
+    5.5858125034, // 2.7929062517 * 2.0, // blackman harris
+    7.1318078462, // 3.5659039231 * 2.0, // flat top
+    3.0058785726, // 1.5029392863 * 2.0, // welch
     // This is added as a precaution, since this index should never be
     // accessed under normal conditions
     1.0 // Custom, precompiled value.
