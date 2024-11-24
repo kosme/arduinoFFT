@@ -86,7 +86,9 @@ void ArduinoFFT<T>::compute(T *vReal, T *vImag, uint_fast16_t samples,
       swap(&vImag[i], &vImag[j]);
       #endif
       if (dir == FFTDirection::Reverse)
+      #ifndef COMPLEX_INPUT
         swap(&vImag[i], &vImag[j]);
+      #endif
     }
     uint_fast16_t k = (samples >> 1);
 
