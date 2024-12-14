@@ -1,0 +1,28 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: ArduinoFFT
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Enrique
+    family-names: Condes Brena
+    email: econdes@outlook.com
+    affiliation: University of Texas at Austin
+    orcid: 'https://orcid.org/0009-0002-4563-3250'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.14195818
+repository-code: 'https://github.com/kosme/arduinoFFT'
+abstract: Fast Fourier Transform implementation for microcontrollers
+keywords:
+  - fft
+  - arduino
+  - dsp
+license: GPL-3.0-or-later
+commit: 96701da
+version: 2.0.4
+date-released: '2024-11-21'
