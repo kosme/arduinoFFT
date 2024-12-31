@@ -35,6 +35,9 @@ ArduinoFFT<T>::ArduinoFFT(T *vReal, T *vImag, uint_fast16_t samples,
 #ifdef FFT_SPEED_OVER_PRECISION
   _oneOverSamples = 1.0 / samples;
 #endif
+#ifdef SWAP_TABLE
+  generateSwapIndexes();
+#endif
 }
 
 template <typename T> ArduinoFFT<T>::~ArduinoFFT(void) {
@@ -42,6 +45,12 @@ template <typename T> ArduinoFFT<T>::~ArduinoFFT(void) {
   if (_precompiledWindowingFactors) {
     delete[] _precompiledWindowingFactors;
   }
+#ifdef SWAP_TABLE
+  if (_swapIndexes != nullptr) {
+    delete[] _swapIndexes;
+    _swapIndexes = nullptr;
+  }
+#endif
 }
 
 template <typename T> void ArduinoFFT<T>::complexToMagnitude(void) const {
@@ -57,9 +66,16 @@ void ArduinoFFT<T>::complexToMagnitude(T *vReal, T *vImag,
   }
 }
 
+// Computes in-place complex-to-complex FFT with optional optimizations
 template <typename T> void ArduinoFFT<T>::compute(FFTDirection dir) const {
-  compute(this->_vReal, this->_vImag, this->_samples, exponent(this->_samples),
-          dir);
+  // Reverse bits
+#ifdef SWAP_TABLE
+  swapWithIndexes(dir);
+#else
+  swapData(this->_vReal, this->_vImag, this->_samples, dir);
+#endif
+  // Compute the FFT
+  Computation(this->_vReal, this->_vImag, this->_samples, this->_power, dir);
 }
 
 template <typename T>
@@ -72,80 +88,13 @@ void ArduinoFFT<T>::compute(T *vReal, T *vImag, uint_fast16_t samples,
 template <typename T>
 void ArduinoFFT<T>::compute(T *vReal, T *vImag, uint_fast16_t samples,
                             uint_fast8_t power, FFTDirection dir) const {
-#ifdef FFT_SPEED_OVER_PRECISION
-  T oneOverSamples = this->_oneOverSamples;
-  if (!this->_oneOverSamples)
-    oneOverSamples = 1.0 / samples;
+#ifdef SWAP_TABLE
+#warning "SWAP_TABLE has no effect when using the legacy API."
 #endif
   // Reverse bits
-  uint_fast16_t j = 0;
-  for (uint_fast16_t i = 0; i < (samples - 1); i++) {
-    if (i < j) {
-      swap(&vReal[i], &vReal[j]);
-#ifdef COMPLEX_INPUT
-      swap(&vImag[i], &vImag[j]);
-  #else
-      if (dir == FFTDirection::Reverse)
-        swap(&vImag[i], &vImag[j]);
-#endif
-    }
-    uint_fast16_t k = (samples >> 1);
-
-    while (k <= j) {
-      j -= k;
-      k >>= 1;
-    }
-    j += k;
-  }
+  swapData(vReal, vImag, samples, dir);
   // Compute the FFT
-  T c1 = -1.0;
-  T c2 = 0.0;
-  uint_fast16_t l2 = 1;
-  for (uint_fast8_t l = 0; (l < power); l++) {
-    uint_fast16_t l1 = l2;
-    l2 <<= 1;
-    T u1 = 1.0;
-    T u2 = 0.0;
-    for (j = 0; j < l1; j++) {
-      for (uint_fast16_t i = j; i < samples; i += l2) {
-        uint_fast16_t i1 = i + l1;
-        T t1 = u1 * vReal[i1] - u2 * vImag[i1];
-        T t2 = u1 * vImag[i1] + u2 * vReal[i1];
-        vReal[i1] = vReal[i] - t1;
-        vImag[i1] = vImag[i] - t2;
-        vReal[i] += t1;
-        vImag[i] += t2;
-      }
-      T z = ((u1 * c1) - (u2 * c2));
-      u2 = ((u1 * c2) + (u2 * c1));
-      u1 = z;
-    }
-
-#if defined(__AVR__) && defined(USE_AVR_PROGMEM)
-    c2 = pgm_read_float_near(&(_c2[l]));
-    c1 = pgm_read_float_near(&(_c1[l]));
-#else
-    T cTemp = 0.5 * c1;
-    c2 = sqrt_internal(0.5 - cTemp);
-    c1 = sqrt_internal(0.5 + cTemp);
-#endif
-
-    if (dir == FFTDirection::Forward) {
-      c2 = -c2;
-    }
-  }
-  // Scaling for reverse transform
-  if (dir == FFTDirection::Reverse) {
-    for (uint_fast16_t i = 0; i < samples; i++) {
-#ifdef FFT_SPEED_OVER_PRECISION
-      vReal[i] *= oneOverSamples;
-      vImag[i] *= oneOverSamples;
-#else
-      vReal[i] /= samples;
-      vImag[i] /= samples;
-#endif
-    }
-  }
+  Computation(vReal, vImag, samples, power, dir);
 }
 
 template <typename T> void ArduinoFFT<T>::dcRemoval(void) const {
@@ -523,6 +472,135 @@ const T ArduinoFFT<T>::_WindowCompensationFactors[11] = {
     // accessed under normal conditions
     1.0 // Custom, precompiled value.
 };
+
+#ifdef SWAP_TABLE
+template <typename T> void ArduinoFFT<T>::generateSwapIndexes(void) {
+  if (this->_power == 0) {
+    this->_power = exponent(this->_samples);
+  }
+  if (this->_swapIndexes) {
+    delete[] this->_swapIndexes;
+  }
+  uint16_t minLength = this->_samples * 3 / 4;
+  this->_swapIndexes = new uint_fast16_t[minLength];
+  for (uint_fast16_t i = 0; i < minLength; ++i) {
+    this->_swapIndexes[i] = reverseBits(i);
+  }
+}
+
+template <typename T>
+uint_fast16_t ArduinoFFT<T>::reverseBits(uint_fast16_t index) {
+  uint_fast16_t reversed = 0;
+  for (uint_fast16_t i = 0; i < this->_power; ++i) {
+    reversed <<= 1;
+    reversed |= index & 1;
+    index >>= 1;
+  }
+  return reversed;
+}
+
+template <typename T> void ArduinoFFT<T>::swapWithIndexes(FFTDirection dir) {
+  uint_fast16_t j = 0;
+  // More efficient than samples * 0.75
+  uint_fast16_t minLen = (samples >> 2) + (samples >> 1);
+  for (uint_fast16_t i = 1; i < minLen; i++) {
+    j = this->_swapIndexes[i];
+    if (i < j) {
+      swap(&vReal[i], &vReal[j]);
+#ifdef COMPLEX_INPUT
+      swap(&vImag[i], &vImag[j]);
+#else
+      if (dir == FFTDirection::Reverse)
+        swap(&vImag[i], &vImag[j]);
+#endif
+    }
+  }
+}
+#endif
+template <typename T>
+void ArduinoFFT<T>::swapData(T *vReal, T *vImag, uint_fast16_t samples,
+                             FFTDirection dir) const {
+  uint_fast16_t j = 0;
+  for (uint_fast16_t i = 0; i < (samples - 1); i++) {
+    if (i < j) {
+      swap(&vReal[i], &vReal[j]);
+#ifdef COMPLEX_INPUT
+      swap(&vImag[i], &vImag[j]);
+#else
+      if (dir == FFTDirection::Reverse)
+        swap(&vImag[i], &vImag[j]);
+#endif
+    }
+    uint_fast16_t k = (samples >> 1);
+
+    while (k <= j) {
+      j -= k;
+      k >>= 1;
+    }
+    j += k;
+  }
+}
+
+template <typename T>
+void ArduinoFFT<T>::Computation(T *vReal, T *vImag, uint_fast16_t samples,
+                                uint_fast8_t power, FFTDirection dir) const {
+#ifdef FFT_SPEED_OVER_PRECISION
+  T oneOverSamples = this->_oneOverSamples;
+  if (!this->_oneOverSamples) {
+    oneOverSamples = 1.0 / samples;
+    this->_oneOverSamples = oneOverSamples;
+  }
+#endif
+  uint_fast16_t j = 0;
+  T c1 = -1.0;
+  T c2 = 0.0;
+  uint_fast16_t l2 = 1;
+  for (uint_fast8_t l = 0; (l < power); l++) {
+    uint_fast16_t l1 = l2;
+    l2 <<= 1;
+    T u1 = 1.0;
+    T u2 = 0.0;
+    for (j = 0; j < l1; j++) {
+      for (uint_fast16_t i = j; i < samples; i += l2) {
+        uint_fast16_t i1 = i + l1;
+        T t1 = u1 * vReal[i1] - u2 * vImag[i1];
+        T t2 = u1 * vImag[i1] + u2 * vReal[i1];
+        vReal[i1] = vReal[i] - t1;
+        vImag[i1] = vImag[i] - t2;
+        vReal[i] += t1;
+        vImag[i] += t2;
+      }
+      T z = ((u1 * c1) - (u2 * c2));
+      u2 = ((u1 * c2) + (u2 * c1));
+      u1 = z;
+    }
+
+#if defined(__AVR__) && defined(USE_AVR_PROGMEM)
+    c2 = pgm_read_float_near(&(_c2[l]));
+    c1 = pgm_read_float_near(&(_c1[l]));
+#else
+    T cTemp = 0.5 * c1;
+    c2 = sqrt_internal(0.5 - cTemp);
+    c1 = sqrt_internal(0.5 + cTemp);
+#endif
+
+    if (dir == FFTDirection::Forward) {
+      c2 = -c2;
+    }
+  }
+  // Scaling for reverse transform
+  if (dir == FFTDirection::Reverse) {
+    for (uint_fast16_t i = 0; i < samples; i++) {
+#ifdef FFT_SPEED_OVER_PRECISION
+      vReal[i] *= oneOverSamples;
+      vImag[i] *= oneOverSamples;
+#else
+      vReal[i] /= samples;
+      vImag[i] /= samples;
+#endif
+    }
+  }
+}
 
 template class ArduinoFFT<double>;
 template class ArduinoFFT<float>;

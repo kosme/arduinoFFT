@@ -48,9 +48,9 @@
 // This might only work for specific use cases, but is significantly faster.
 
 #ifndef FFT_SQRT_APPROXIMATION
-  #ifndef sqrt_internal
-    #define sqrt_internal sqrt
-  #endif
+#ifndef sqrt_internal
+#define sqrt_internal sqrt
+#endif
 #endif
 
 #define FFT_LIB_REV 0x20
@@ -110,6 +110,9 @@ private:
   T *_precompiledWindowingFactors = nullptr;
   uint_fast16_t _samples;
   T _samplingFrequency;
+#ifdef SWAP_TABLE
+  uint_fast16_t *_swapIndexes = nullptr;
+#endif
   T *_vImag;
   T *_vReal;
   FFTWindow _windowFunction;
@@ -119,6 +122,16 @@ private:
                 uint_fast16_t *index) const;
   void parabola(T x1, T y1, T x2, T y2, T x3, T y3, T *a, T *b, T *c) const;
   void swap(T *a, T *b) const;
+
+#ifdef SWAP_TABLE
+  void generateSwapIndexes(void);
+  uint_fast16_t reverseBits(uint_fast16_t index);
+  void swapWithIndexes(FFTDirection dir);
+#endif
+  void swapData(T *vReal, T *vImag, uint_fast16_t samples,
+                FFTDirection dir) const;
+  void Computation(T *vReal, T *vImag, uint_fast16_t samples,
+                   uint_fast8_t power, FFTDirection dir) const;
 
 #ifdef FFT_SQRT_APPROXIMATION
   float sqrt_internal(float x) const;
